@@ -12,25 +12,31 @@ public class TaskManager {
     private static Map<Integer, Task> idToEpic = new HashMap<>();
     private static int taskId = 1;
 
+
     public Task addNewTask(Task newTask) {
         int newId = generateNewId();
         newTask.setId(newId);
 
-        if (newTask.getClass().getName().equals("tasks.Task")) {
+        if (newTask.getClass() == Task.class) {
             idToTask.put(newTask.getId(), newTask);
             System.out.print("Added task: ");
 
-        } else if (newTask.getClass().getName().equals("tasks.Subtask")) {
+        } else if (newTask.getClass() == Subtask.class) {
             Subtask subtask;
             try {
                 subtask = (Subtask) newTask;
             } catch (Exception exception) {
                 throw exception;
             }
-            subtask.getCurrentEpic().addSubtask(newTask.getId(), newTask);
-            subtask.getCurrentEpic().refreshEpicStatus();
-            idToSubtask.put(newTask.getId(), newTask);
-            System.out.print("Added subtask: ");
+            if (subtask.getCurrentEpic() != null) {
+                subtask.getCurrentEpic().addSubtask(newTask.getId(), newTask);
+                subtask.getCurrentEpic().refreshEpicStatus();
+                idToSubtask.put(newTask.getId(), newTask);
+                System.out.print("Added subtask: ");
+            } else {
+                System.out.print("Subtask must contain Epic ");
+                return null;
+            }
 
         } else {
             idToEpic.put(newTask.getId(), newTask);
@@ -42,13 +48,13 @@ public class TaskManager {
     public Task updateTask(Task updatedTask) {
         Integer taskId = updatedTask.getId();
 
-        if (idToTask.containsKey(taskId) && updatedTask.getClass().getName().equals("tasks.Task")) {
+        if (idToTask.containsKey(taskId) && updatedTask.getClass() == Task.class) {
             idToTask.put(taskId, updatedTask);
             System.out.print("Updated task: ");
             return updatedTask;
 
-        } else if (idToSubtask.containsKey(taskId) && updatedTask.getClass().getName().equals("tasks.Subtask")) {
-            Subtask subtask = (Subtask) idToSubtask.get(updatedTask.getId());
+        } else if (idToSubtask.containsKey(taskId) && updatedTask.getClass() == Subtask.class) {
+            Subtask subtaskMap = (Subtask) idToSubtask.get(updatedTask.getId());
             Subtask subtaskTemp;
 
             try {
@@ -59,16 +65,16 @@ public class TaskManager {
             }
 
             if (subtaskTemp.getCurrentEpic() == null) {
-                subtaskTemp.setCurrentEpic(subtask.getCurrentEpic());
+                subtaskTemp.setCurrentEpic(subtaskMap.getCurrentEpic());
             }
 
-            subtask.getCurrentEpic().addSubtask(taskId, subtaskTemp);
-            subtask.getCurrentEpic().refreshEpicStatus();
+            subtaskMap.getCurrentEpic().addSubtask(taskId, subtaskTemp);
+            subtaskMap.getCurrentEpic().refreshEpicStatus();
             idToSubtask.put(taskId, subtaskTemp);
             System.out.print("Updated subtask: ");
             return subtaskTemp;
 
-        } else if (idToEpic.containsKey(taskId) && updatedTask.getClass().getName().equals("tasks.Epic")) {
+        } else if (idToEpic.containsKey(taskId) && updatedTask.getClass() == Epic.class) {
             idToEpic.put(taskId, updatedTask);
             System.out.print("Updated epic: ");
             return updatedTask;
@@ -82,15 +88,14 @@ public class TaskManager {
     public Task deleteTask(Task deleteTask) {
         Integer taskId = deleteTask.getId();
         Task removedTask;
-        if (idToTask.containsKey(taskId) && deleteTask.getClass().getName().equals("tasks.Task")) {
+        if (idToTask.containsKey(taskId) && deleteTask.getClass() == Task.class) {
             removedTask = idToTask.get(taskId);
             idToTask.remove(taskId);
 
-        } else if (idToSubtask.containsKey(taskId) && deleteTask.getClass().getName().equals("tasks.Subtask")) {
+        } else if (idToSubtask.containsKey(taskId) && deleteTask.getClass() == Subtask.class) {
             Subtask subtask;
-
             try {
-                subtask = (Subtask) deleteTask;
+                subtask = (Subtask) idToSubtask.get(taskId);
             } catch (Exception exception) {
                 throw exception;
             }
@@ -100,7 +105,7 @@ public class TaskManager {
             removedTask = idToSubtask.get(taskId);
             idToSubtask.remove(taskId);
 
-        } else if (idToEpic.containsKey(taskId) && deleteTask.getClass().getName().equals("tasks.Epic")) {
+        } else if (idToEpic.containsKey(taskId) && deleteTask.getClass() == Epic.class) {
             removedTask = idToEpic.get(taskId);
             idToEpic.remove(taskId);
 

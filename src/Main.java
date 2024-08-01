@@ -17,11 +17,11 @@ public class Main {
         System.out.println("-----------------------------------------");
 
 
-        Task newEpic1 = new Epic("Эпик 1", "Описание задачи", TaskStatus.NEW);
+        Task newEpic1 = new Epic("Эпик 1", "Описание задачи");
         System.out.println(taskManager.addNewTask(newEpic1));
         System.out.println("-----------------------------------------");
 
-        Task newEpic2 = new Epic("Эпик 2", "Описание задачи", TaskStatus.DONE);
+        Task newEpic2 = new Epic("Эпик 2", "Описание задачи");
         System.out.println(taskManager.addNewTask(newEpic2));
         System.out.println("-----------------------------------------");
 
@@ -35,6 +35,10 @@ public class Main {
         System.out.println("-----------------------------------------");
 
         newTask = new Subtask("Подзадача 3", "Описание задачи", newEpic2);
+        System.out.println(taskManager.addNewTask(newTask));
+        System.out.println("-----------------------------------------");
+
+        newTask = new Subtask(18, "Подзадача 4", "Описание задачи", TaskStatus.NEW);
         System.out.println(taskManager.addNewTask(newTask));
         System.out.println("-----------------------------------------");
 
@@ -71,6 +75,7 @@ public class Main {
 
         taskManager.deleteTask(new Task(1));
         taskManager.deleteTask(new Epic(3));
+        taskManager.deleteTask(new Subtask(5));
 
         System.out.println(taskManager.getAllEpic());
         System.out.println(taskManager.getAllTasks());

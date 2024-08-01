@@ -7,16 +7,12 @@ public class Epic extends Task {
 
     private Map<Integer, Task> subtasks = new HashMap<>();
 
-    public Epic(String name, String description, TaskStatus status) {
-        super(name, description, status);
-    }
-
     public Epic(String name, String description) {
-        super(name, description);
+        super(name, description, TaskStatus.NEW);
     }
 
-    public Epic(int id, String name, String description, TaskStatus status) {
-        super(id, name, description, status);
+    public Epic(int id, String name, String description) {
+        super(id, name, description, TaskStatus.NEW);
     }
 
     public Epic(int id) {
@@ -30,7 +26,7 @@ public class Epic extends Task {
     public void removeSubtask(Integer id) {
         Task subtask = subtasks.get(id);
         subtasks.remove(id);
-        System.out.println("Removed subtask " + subtask + " from " + this.name);
+        //System.out.println("Removed subtask " + subtask + " from " + this.name);
     }
 
     public void addSubtask(Integer id, Task subtask) {
