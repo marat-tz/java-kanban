@@ -19,6 +19,10 @@ public class Epic extends Task {
         super(id, name, description, status);
     }
 
+    public Epic(int id) {
+        super(id);
+    }
+
     public Map<Integer, Task> getSubtasks() {
         return subtasks;
     }

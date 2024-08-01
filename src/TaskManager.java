@@ -8,10 +8,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class TaskManager {
-    Map<Integer, Task> idToTask = new HashMap<>();
-    Map<Integer, Task> idToSubtask = new HashMap<>();
-    Map<Integer, Task> idToEpic = new HashMap<>();
-    static int taskId = 1;
+    private static Map<Integer, Task> idToTask = new HashMap<>();
+    private static Map<Integer, Task> idToSubtask = new HashMap<>();
+    private static Map<Integer, Task> idToEpic = new HashMap<>();
+    private static int taskId = 1;
 
     // получение списка всех подзадач определённого эпика ✅
     // удаление всех подзадач - изменяет эпику статус на new ✅
@@ -43,10 +43,6 @@ public class TaskManager {
         int newId = generateNewId();
         newTask.setId(newId);
 
-        if (newTask.getStatus() == null) {
-            newTask.setStatus(TaskStatus.NEW);
-        }
-
         if (newTask.getClass().getName().equals("tasks.Task")) {
             idToTask.put(newTask.getId(), newTask);
             System.out.print("Added task: ");
@@ -56,8 +52,7 @@ public class TaskManager {
             try {
                 subtask = (Subtask) newTask;
             } catch (Exception exception) {
-                System.out.println(exception);
-                return null;
+                throw exception;
             }
             subtask.getCurrentEpic().addSubtask(newTask.getId(), newTask);
             subtask.getCurrentEpic().refreshEpicStatus();
@@ -124,8 +119,7 @@ public class TaskManager {
             try {
                 subtask = (Subtask) deleteTask;
             } catch (Exception exception) {
-                System.out.println(exception);
-                return null;
+                throw exception;
             }
 
             subtask.getCurrentEpic().removeSubtask(taskId);
@@ -167,7 +161,7 @@ public class TaskManager {
                     epic.clearSubtasks();
                     epic.refreshEpicStatus();
                 } catch (Exception exception) {
-                    System.out.println(exception);
+                    throw exception;
                 }
             }
         }
@@ -247,8 +241,7 @@ public class TaskManager {
         try {
             epic = (Epic) epicTask;
         } catch (Exception exception) {
-            System.out.println(exception);
-            return null;
+            throw exception;
         }
 
         ArrayList<Task> subtasks = new ArrayList<>();
@@ -267,12 +260,10 @@ public class TaskManager {
 
     public void deleteEpicSubtasks(Task epicTask) {
         Epic epic;
-
         try {
             epic = (Epic) epicTask;
         } catch (Exception exception) {
-            System.out.println(exception);
-            return;
+            throw exception;
         }
 
         if (!epic.getSubtasks().isEmpty()) {
