@@ -207,40 +207,24 @@ public class TaskManager {
         return requestedTask;
     }
 
-    public ArrayList<Task> getEpicSubtasks(Task epicTask) {
-        Epic epic;
-
-        try {
-            epic = (Epic) epicTask;
-        } catch (Exception exception) {
-            System.out.println(exception.getMessage());
-            return null;
-        }
-
+    public ArrayList<Task> getEpicSubtasks(Epic epic) {
+        Epic epicInMap = (Epic) idToEpic.get(epic.getId());
         ArrayList<Task> subtasks = new ArrayList<>();
-        if (!epic.getSubtasks().isEmpty()) {
-            subtasks.addAll(epic.getSubtasks().values());
-            System.out.print("Epic " + epic.getName() + " contains: ");
+        if (!epicInMap.getSubtasks().isEmpty()) {
+            subtasks.addAll(epicInMap.getSubtasks().values());
+            System.out.print("Epic " + epicInMap.getName() + " contains: ");
             return subtasks;
         }
-
         System.out.print("Epic not contains subtasks ");
         return null;
     }
 
-    public void deleteEpicSubtasks(Task epicTask) {
-        Epic epic;
-        try {
-            epic = (Epic) epicTask;
-        } catch (Exception exception) {
-            System.out.println(exception.getMessage());
-            return;
-        }
-
-        if (!epic.getSubtasks().isEmpty()) {
-            epic.clearSubtasks();
-            epic.refreshEpicStatus();
-            System.out.println("Removed all subtasks from " + epic.getName());
+    public void deleteEpicSubtasks(Epic epic) {
+        Epic epicInMap = (Epic) idToEpic.get(epic.getId());
+        if (!epicInMap.getSubtasks().isEmpty()) {
+            epicInMap.clearSubtasks();
+            epicInMap.refreshEpicStatus();
+            System.out.println("Removed all subtasks from " + epicInMap.getName());
         } else {
             System.out.println("Epic not contains subtasks");
         }
