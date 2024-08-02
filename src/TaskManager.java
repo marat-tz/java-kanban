@@ -12,7 +12,6 @@ public class TaskManager {
     private static Map<Integer, Task> idToEpic = new HashMap<>();
     private static int taskId = 1;
 
-
     public Task addNewTask(Task newTask) {
         int newId = generateNewId();
         newTask.setId(newId);
@@ -196,7 +195,7 @@ public class TaskManager {
         } else if (idToSubtask.containsKey(task.getId())) {
             requestedTask = idToSubtask.get(task.getId());
 
-        } else if (idToEpic.containsKey(task.getId())){
+        } else if (idToEpic.containsKey(task.getId())) {
             requestedTask = idToEpic.get(task.getId());
 
         } else {
@@ -250,5 +249,4 @@ public class TaskManager {
     private int generateNewId() {
         return taskId++;
     }
-
 }

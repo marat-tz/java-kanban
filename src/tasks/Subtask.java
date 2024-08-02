@@ -39,7 +39,6 @@ public class Subtask extends Task {
         this.currentEpic = currentEpic;
     }
 
-
     @Override
     public String toString() {
         return "tasks.Subtask{" +
