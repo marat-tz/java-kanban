@@ -17,11 +17,11 @@ public class Main {
         System.out.println("-----------------------------------------");
 
 
-        Task newEpic1 = new Epic("Эпик 1", "Описание задачи");
+        Epic newEpic1 = new Epic("Эпик 1", "Описание задачи");
         System.out.println(taskManager.addNewTask(newEpic1));
         System.out.println("-----------------------------------------");
 
-        Task newEpic2 = new Epic("Эпик 2", "Описание задачи");
+        Epic newEpic2 = new Epic("Эпик 2", "Описание задачи");
         System.out.println(taskManager.addNewTask(newEpic2));
         System.out.println("-----------------------------------------");
 

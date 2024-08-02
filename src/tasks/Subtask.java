@@ -4,23 +4,15 @@ public class Subtask extends Task {
 
     private Epic currentEpic;
 
-    public Subtask(String name, String description, Task currentEpic, TaskStatus status) {
+    public Subtask(String name, String description, Epic currentEpic, TaskStatus status) {
         super(name, description, status);
-        try {
-            this.currentEpic = (Epic) currentEpic;
-        } catch (Exception exception) {
-            System.out.println(exception.getMessage());
-        }
+        this.currentEpic = currentEpic;
 
     }
 
-    public Subtask(String name, String description, Task currentEpic) {
+    public Subtask(String name, String description, Epic currentEpic) {
         super(name, description);
-        try {
-            this.currentEpic = (Epic) currentEpic;
-        } catch (Exception exception) {
-            System.out.println(exception.getMessage());
-        }
+        this.currentEpic = currentEpic;
     }
 
     public Subtask(int id, String name, String description, TaskStatus status) {
