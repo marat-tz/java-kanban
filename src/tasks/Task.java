@@ -4,7 +4,6 @@ import java.util.Objects;
 
 public class Task {
 
-
     protected String name;
     protected String description;
     protected int id;
@@ -33,7 +32,6 @@ public class Task {
         this.status = status;
     }
 
-
     public String getName() {
         return name;
     }
@@ -52,7 +50,6 @@ public class Task {
     public void setStatus(TaskStatus status) {
         this.status = status;
     }
-
 
     @Override
     public boolean equals(Object o) {

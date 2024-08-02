@@ -26,7 +26,8 @@ public class TaskManager {
             try {
                 subtask = (Subtask) newTask;
             } catch (Exception exception) {
-                throw exception;
+                System.out.println(exception.getMessage());
+                return null;
             }
             if (subtask.getCurrentEpic() != null) {
                 subtask.getCurrentEpic().addSubtask(newTask.getId(), newTask);
@@ -60,7 +61,7 @@ public class TaskManager {
             try {
                 subtaskTemp = (Subtask) updatedTask;
             } catch (Exception exception) {
-                System.out.println(exception);
+                System.out.println(exception.getMessage());
                 return null;
             }
 
@@ -97,7 +98,8 @@ public class TaskManager {
             try {
                 subtask = (Subtask) idToSubtask.get(taskId);
             } catch (Exception exception) {
-                throw exception;
+                System.out.println(exception.getMessage());
+                return null;
             }
 
             subtask.getCurrentEpic().removeSubtask(taskId);
@@ -139,7 +141,7 @@ public class TaskManager {
                     epic.clearSubtasks();
                     epic.refreshEpicStatus();
                 } catch (Exception exception) {
-                    throw exception;
+                    System.out.println(exception.getMessage());
                 }
             }
         }
@@ -153,16 +155,13 @@ public class TaskManager {
             tasksSum += idToEpic.size();
             idToEpic.clear();
         }
-
         System.out.println("Removed " + tasksSum + " epics");
     }
 
     public ArrayList<Task> getAllTasks() {
         ArrayList<Task> tasks = new ArrayList<>();
         if (!idToTask.isEmpty()) {
-            for (Task task : idToTask.values()) {
-                tasks.add(task);
-            }
+            tasks.addAll(idToTask.values());
             return tasks;
         }
         System.out.print("Tasks list is empty ");
@@ -172,9 +171,7 @@ public class TaskManager {
     public ArrayList<Task> getAllSubtasks() {
         ArrayList<Task> tasks = new ArrayList<>();
         if (!idToSubtask.isEmpty()) {
-            for (Task task : idToSubtask.values()) {
-                tasks.add(task);
-            }
+            tasks.addAll(idToSubtask.values());
             return tasks;
         }
         System.out.print("Subtasks list is empty ");
@@ -184,9 +181,7 @@ public class TaskManager {
     public ArrayList<Task> getAllEpic() {
         ArrayList<Task> tasks = new ArrayList<>();
         if (!idToEpic.isEmpty()) {
-            for (Task task : idToEpic.values()) {
-                tasks.add(task);
-            }
+            tasks.addAll(idToEpic.values());
             return tasks;
         }
         System.out.print("Epic tasks list is empty ");
@@ -219,15 +214,13 @@ public class TaskManager {
         try {
             epic = (Epic) epicTask;
         } catch (Exception exception) {
-            throw exception;
+            System.out.println(exception.getMessage());
+            return null;
         }
 
         ArrayList<Task> subtasks = new ArrayList<>();
-
         if (!epic.getSubtasks().isEmpty()) {
-            for (Task subtask : epic.getSubtasks().values()) {
-                subtasks.add(subtask);
-            }
+            subtasks.addAll(epic.getSubtasks().values());
             System.out.print("Epic " + epic.getName() + " contains: ");
             return subtasks;
         }
@@ -241,7 +234,8 @@ public class TaskManager {
         try {
             epic = (Epic) epicTask;
         } catch (Exception exception) {
-            throw exception;
+            System.out.println(exception.getMessage());
+            return;
         }
 
         if (!epic.getSubtasks().isEmpty()) {

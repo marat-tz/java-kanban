@@ -24,9 +24,7 @@ public class Epic extends Task {
     }
 
     public void removeSubtask(Integer id) {
-        Task subtask = subtasks.get(id);
         subtasks.remove(id);
-        //System.out.println("Removed subtask " + subtask + " from " + this.name);
     }
 
     public void addSubtask(Integer id, Task subtask) {
@@ -61,7 +59,6 @@ public class Epic extends Task {
             }
         }
     }
-
 
     @Override
     public String toString() {

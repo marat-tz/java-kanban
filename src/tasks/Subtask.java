@@ -9,7 +9,7 @@ public class Subtask extends Task {
         try {
             this.currentEpic = (Epic) currentEpic;
         } catch (Exception exception) {
-            throw exception;
+            System.out.println(exception.getMessage());
         }
 
     }
@@ -19,7 +19,7 @@ public class Subtask extends Task {
         try {
             this.currentEpic = (Epic) currentEpic;
         } catch (Exception exception) {
-            throw exception;
+            System.out.println(exception.getMessage());
         }
     }
 
@@ -50,5 +50,4 @@ public class Subtask extends Task {
                 ", epic=" + currentEpic +
                 '}';
     }
-    // нужно знать, в рамках какого эпика подзадача выполняется
 }
