@@ -7,10 +7,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class TaskManager {
-    private static Map<Integer, Task> idToTask = new HashMap<>();
+    private static Map<Integer, Task> idToTask = new HashMap<>(); // убрать static, добавить final, поменять тип
     private static Map<Integer, Task> idToSubtask = new HashMap<>();
     private static Map<Integer, Task> idToEpic = new HashMap<>();
-    private static int taskId = 1;
+    private static int taskId = 1; // убрать static
 
     public Task addNewTask(Task newTask) {
         int newId = generateNewId();
@@ -38,7 +38,7 @@ public class TaskManager {
                 return null;
             }
 
-        } else {
+        } else if (newTask.getClass() == Epic.class) {
             idToEpic.put(newTask.getId(), newTask);
             System.out.print("Added epic: ");
         }

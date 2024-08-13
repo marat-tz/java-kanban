@@ -81,5 +81,10 @@ public class Main {
         System.out.println(taskManager.getAllTasks());
         System.out.println(taskManager.getAllSubtasks());
 
+        System.out.println(taskManager.getEpicSubtasks(newEpic2));
+        taskManager.deleteEpicSubtasks(newEpic2);
+        System.out.println(taskManager.getEpicSubtasks(newEpic2));
+
+
     }
 }
