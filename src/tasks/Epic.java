@@ -1,11 +1,11 @@
 package tasks;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 public class Epic extends Task {
-
-    private Map<Integer, Task> subtasks = new HashMap<>();
+    private ArrayList<Integer> epicSubtasks = new ArrayList<>();
 
     public Epic(String name, String description) {
         super(name, description, TaskStatus.NEW);
@@ -19,45 +19,24 @@ public class Epic extends Task {
         super(id);
     }
 
-    public Map<Integer, Task> getSubtasks() {
-        return subtasks;
+    public ArrayList<Integer> getEpicSubtasksId() {
+        return epicSubtasks;
+    }
+
+    public void setEpicStatus(TaskStatus status) {
+        this.status = status;
     }
 
     public void removeSubtask(Integer id) {
-        subtasks.remove(id);
+        epicSubtasks.remove(id);
     }
 
-    public void addSubtask(Integer id, Task subtask) {
-        subtasks.put(id, subtask);
+    public void addSubtask(Integer id) {
+        epicSubtasks.add(id);
     }
 
     public void clearSubtasks() {
-        subtasks.clear();
-    }
-
-    public void refreshEpicStatus() {
-        int countNew = 0;
-        int countDone = 0;
-
-        if (subtasks.isEmpty()) {
-            this.status = TaskStatus.NEW;
-        } else {
-            for (Task subtask : subtasks.values()) {
-                if (subtask.getStatus().equals(TaskStatus.NEW)) {
-                    countNew++;
-                } else if (subtask.getStatus().equals(TaskStatus.DONE)){
-                    countDone++;
-                }
-            }
-
-            if (countNew == subtasks.size()) {
-                this.status = TaskStatus.NEW;
-            } else if (countDone == subtasks.size()) {
-                this.status = TaskStatus.DONE;
-            } else {
-                this.status = TaskStatus.IN_PROGRESS;
-            }
-        }
+        epicSubtasks.clear();
     }
 
     @Override

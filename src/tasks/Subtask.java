@@ -2,17 +2,17 @@ package tasks;
 
 public class Subtask extends Task {
 
-    private Epic currentEpic;
+    private Integer currentEpicId;
 
-    public Subtask(String name, String description, Epic currentEpic, TaskStatus status) {
+    public Subtask(String name, String description, Integer epicId, TaskStatus status) {
         super(name, description, status);
-        this.currentEpic = currentEpic;
+        this.currentEpicId = epicId;
 
     }
 
-    public Subtask(String name, String description, Epic currentEpic) {
+    public Subtask(String name, String description, Integer epicId) {
         super(name, description);
-        this.currentEpic = currentEpic;
+        this.currentEpicId = epicId;
     }
 
     public Subtask(int id, String name, String description, TaskStatus status) {
@@ -23,12 +23,12 @@ public class Subtask extends Task {
         super(id);
     }
 
-    public Epic getCurrentEpic() {
-        return currentEpic;
+    public Integer getCurrentEpicId() {
+        return currentEpicId;
     }
 
-    public void setCurrentEpic(Epic currentEpic) {
-        this.currentEpic = currentEpic;
+    public void setCurrentEpic(Integer currentEpicId) {
+        this.currentEpicId = currentEpicId;
     }
 
     @Override
@@ -38,7 +38,7 @@ public class Subtask extends Task {
                 ", description='" + description + '\'' +
                 ", id=" + id +
                 ", status=" + status +
-                ", epic=" + currentEpic +
+                ", epic=" + currentEpicId +
                 '}';
     }
 }
