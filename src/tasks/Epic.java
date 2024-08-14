@@ -2,6 +2,7 @@ package tasks;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Epic extends Task {
@@ -23,16 +24,16 @@ public class Epic extends Task {
         return epicSubtasks;
     }
 
-    public void setEpicStatus(TaskStatus status) {
-        this.status = status;
-    }
-
     public void removeSubtask(Integer id) {
         epicSubtasks.remove(id);
     }
 
     public void addSubtask(Integer id) {
         epicSubtasks.add(id);
+    }
+
+    public void cloneSubtask(ArrayList<Integer> id) {
+        epicSubtasks = id;
     }
 
     public void clearSubtasks() {
@@ -46,6 +47,7 @@ public class Epic extends Task {
                 ", description='" + description + '\'' +
                 ", id=" + id +
                 ", status=" + status +
+                ", subtasks=" + epicSubtasks +
                 '}';
     }
 
