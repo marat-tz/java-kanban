@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 public class Epic extends Task {
-    private ArrayList<Integer> epicSubtasks = new ArrayList<>();
+    private List<Integer> epicSubtasks = new ArrayList<>();
 
     public Epic(String name, String description) {
         super(name, description, TaskStatus.NEW);
@@ -20,7 +20,7 @@ public class Epic extends Task {
         super(id);
     }
 
-    public ArrayList<Integer> getEpicSubtasksId() {
+    public List<Integer> getEpicSubtasksId() {
         return epicSubtasks;
     }
 
@@ -32,7 +32,7 @@ public class Epic extends Task {
         epicSubtasks.add(id);
     }
 
-    public void cloneSubtask(ArrayList<Integer> id) {
+    public void cloneSubtask(List<Integer> id) {
         epicSubtasks = id;
     }
 

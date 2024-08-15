@@ -6,7 +6,7 @@ import tasks.TaskStatus;
 public class Main {
 
     public static void main(String[] args) {
-        InMemoryTaskManager taskManager = new InMemoryTaskManager();
+        TaskManager taskManager = Managers.getDefault();
 
         Task newTask;
         Epic newEpic;
@@ -148,8 +148,8 @@ public class Main {
         System.out.println(taskManager.getAllSubtasks());
         System.out.println("-----------------------------------------");
 
-        System.out.println("Удаление всех тасков:");
-        taskManager.deleteAllTasks();
+//        System.out.println("Удаление всех тасков:");
+//        taskManager.deleteAllTasks();
 
         System.out.println("Список всех задач:");
         System.out.println(taskManager.getAllEpic());
@@ -157,6 +157,20 @@ public class Main {
         System.out.println(taskManager.getAllSubtasks());
         System.out.println("-----------------------------------------");
 
+        taskManager.getTask(10);
+        taskManager.getTask(11);
+        taskManager.getTask(12);
+        taskManager.getTask(10);
+        taskManager.getTask(11);
+        taskManager.getTask(12);
+        taskManager.getTask(10);
+        taskManager.getTask(11);
+        taskManager.getTask(12);
+        taskManager.getTask(10);
+        taskManager.getTask(11);
+        taskManager.getTask(12);
+
+        System.out.println(taskManager.getHistoryManager().getHistory());
 
     }
 }
