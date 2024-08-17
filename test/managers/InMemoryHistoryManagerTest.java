@@ -71,5 +71,4 @@ class InMemoryHistoryManagerTest {
         assertEquals(2, history.get(0).getId());
         assertEquals(11, history.get(9).getId());
     }
-
 }

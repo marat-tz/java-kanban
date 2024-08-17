@@ -28,10 +28,9 @@ public class Epic extends Task {
         epicSubtasks.remove(id);
     }
 
-    public void addSubtask(Integer id) {
-        epicSubtasks.add(id);
+    public void addSubtask(Subtask subtask) {
+        epicSubtasks.add(subtask.getId());
     }
-
 
     public void cloneSubtask(List<Integer> id) {
         epicSubtasks = id;

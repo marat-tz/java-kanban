@@ -70,7 +70,7 @@ public class InMemoryTaskManager implements TaskManager {
         newSubtask.setId(newId);
         if (subtaskEpicId != null && subtaskEpicId > 0) {
             if (idToEpic.containsKey(newSubtask.getEpicId())) {
-                idToEpic.get(newSubtask.getEpicId()).addSubtask(newSubtask.getId());
+                idToEpic.get(newSubtask.getEpicId()).addSubtask(newSubtask);
             } else {
                 System.out.println("Map not contains epic");
                 return null;
@@ -126,7 +126,7 @@ public class InMemoryTaskManager implements TaskManager {
                 idToEpic.get(idToSubtask.get(subtaskId).getEpicId()).removeSubtask(subtaskId);
                 refreshEpicStatus(idToSubtask.get(subtaskId).getEpicId());
                 idToSubtask.put(subtaskId, subtaskUpdate);
-                idToEpic.get(subtaskUpdate.getEpicId()).addSubtask(subtaskId);
+                idToEpic.get(subtaskUpdate.getEpicId()).addSubtask(subtaskUpdate);
                 refreshEpicStatus(subtaskUpdate.getEpicId());
                 System.out.println("Updated subtask: " + subtaskUpdate);
             }

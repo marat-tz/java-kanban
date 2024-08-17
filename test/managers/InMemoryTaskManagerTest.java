@@ -399,6 +399,4 @@ class InMemoryTaskManagerTest {
         Assertions.assertEquals(expectedSubtask2, epicSubtasks.get(1));
         Assertions.assertEquals(expectedSubtask3, epicSubtasks.get(2));
     }
-
-
 }
