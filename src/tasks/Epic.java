@@ -32,6 +32,7 @@ public class Epic extends Task {
         epicSubtasks.add(id);
     }
 
+
     public void cloneSubtask(List<Integer> id) {
         epicSubtasks = id;
     }
