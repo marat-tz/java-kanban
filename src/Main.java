@@ -1,3 +1,5 @@
+import managers.Managers;
+import managers.TaskManager;
 import tasks.Epic;
 import tasks.Subtask;
 import tasks.Task;
@@ -147,9 +149,6 @@ public class Main {
         System.out.println(taskManager.getAllTasks());
         System.out.println(taskManager.getAllSubtasks());
         System.out.println("-----------------------------------------");
-
-//        System.out.println("Удаление всех тасков:");
-//        taskManager.deleteAllTasks();
 
         System.out.println("Список всех задач:");
         System.out.println(taskManager.getAllEpic());
