@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Epic extends Task {
+public class Epic extends Task { // комментарий для проверки коммита
     private List<Integer> epicSubtasks = new ArrayList<>();
 
     public Epic(String name, String description) {
