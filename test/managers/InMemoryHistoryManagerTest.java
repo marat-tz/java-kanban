@@ -1,15 +1,16 @@
 package managers;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import tasks.Epic;
 import tasks.Subtask;
 import tasks.Task;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class InMemoryHistoryManagerTest {
 
@@ -70,5 +71,19 @@ class InMemoryHistoryManagerTest {
         assertEquals(10, history.size());
         assertEquals(2, history.get(0).getId());
         assertEquals(11, history.get(9).getId());
+    }
+
+    @Test
+    void add_shouldNotSaveNullTaskInHistory() {
+        // prepare
+        Task task1 = null;
+
+        // do
+        historyManager.add(task1);
+
+        // check
+        final List<Task> history = historyManager.getHistory();
+        List<Task> emptyList = new ArrayList<>();
+        assertEquals(emptyList, history);
     }
 }

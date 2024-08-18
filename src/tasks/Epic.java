@@ -1,11 +1,8 @@
 package tasks;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-public class Epic extends Task { // комментарий для проверки коммита
+public class Epic extends Task {
     private List<Integer> epicSubtasks = new ArrayList<>();
 
     public Epic(String name, String description) {
@@ -20,8 +17,8 @@ public class Epic extends Task { // комментарий для проверк
         super(id);
     }
 
-    public List<Integer> getEpicSubtasksId() {
-        return epicSubtasks;
+    public ArrayList<Integer> getEpicSubtasksId() {
+        return new ArrayList<>(epicSubtasks);
     }
 
     public void removeSubtask(Integer id) {
@@ -29,11 +26,19 @@ public class Epic extends Task { // комментарий для проверк
     }
 
     public void addSubtask(Subtask subtask) {
-        epicSubtasks.add(subtask.getId());
+        if (Objects.nonNull(subtask)) {
+            epicSubtasks.add(subtask.getId());
+        } else {
+            System.out.println("Subtask can't be null");
+        }
     }
 
-    public void cloneSubtask(List<Integer> id) {
-        epicSubtasks = id;
+    public void replaceSubtasks(List<Integer> listId) {
+        if (Objects.nonNull(listId)) {
+            epicSubtasks = listId;
+        } else {
+            System.out.println("Subtask ids list can't be null");
+        }
     }
 
     public void clearSubtasks() {

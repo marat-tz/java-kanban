@@ -45,8 +45,12 @@ public class Task {
         return id;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setId(Integer id) {
+        if (Objects.nonNull(id) && id >= 0) {
+            this.id = id;
+        } else {
+            System.out.println("id can't be null or less than 0");
+        }
     }
 
     public TaskStatus getStatus() {
@@ -54,7 +58,11 @@ public class Task {
     }
 
     public void setStatus(TaskStatus status) {
-        this.status = status;
+        if (Objects.nonNull(status)) {
+            this.status = status;
+        } else {
+            System.out.println("Status can't be null");
+        }
     }
 
     @Override

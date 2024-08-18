@@ -1,5 +1,7 @@
 package tasks;
 
+import java.util.Objects;
+
 public class Subtask extends Task {
 
     private Integer epicId;
@@ -36,8 +38,12 @@ public class Subtask extends Task {
         return epicId;
     }
 
-    public void setEpic(Integer currentEpicId) {
-        this.epicId = currentEpicId;
+    public void setEpicId(Integer epicId) {
+        if (Objects.nonNull(epicId)) {
+            this.epicId = epicId;
+        } else {
+            System.out.println("Epic id can't be null");
+        }
     }
 
     @Override

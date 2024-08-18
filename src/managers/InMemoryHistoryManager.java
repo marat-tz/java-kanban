@@ -3,24 +3,25 @@ package managers;
 import tasks.Task;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class InMemoryHistoryManager implements HistoryManager {
     private final List<Task> taskHistory = new ArrayList<>();
 
     @Override
     public List<Task> getHistory() {
-        if (!taskHistory.isEmpty()) {
             return new ArrayList<>(taskHistory);
-        }
-        return null;
     }
 
     @Override
     public void add(Task task) {
-        if (taskHistory.size() >= 10) {
-            taskHistory.remove(0);
+        if (Objects.nonNull(task)) {
+            if (taskHistory.size() >= 10) {
+                taskHistory.remove(0);
+            }
+            taskHistory.add(task);
+        } else {
+            System.out.println("Task is null");
         }
-
-        taskHistory.add(task);
     }
 }

@@ -1,13 +1,18 @@
 package managers;
 
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import tasks.Epic;
 import tasks.Subtask;
 import tasks.Task;
 import tasks.TaskStatus;
+
+import java.util.ArrayList;
 import java.util.List;
 
 class InMemoryTaskManagerTest {
@@ -17,11 +22,6 @@ class InMemoryTaskManagerTest {
     @BeforeEach
     void init() {
         taskManager = Managers.getDefault();
-    }
-
-    @AfterEach
-    void cleanUp() {
-
     }
 
     @Test
@@ -34,9 +34,9 @@ class InMemoryTaskManagerTest {
         Task actualTask = taskManager.addNewTask(task);
 
         // check
-        Assertions.assertNotNull(actualTask);
-        Assertions.assertNotNull(actualTask.getId());
-        Assertions.assertEquals(expectedTask, actualTask);
+        assertNotNull(actualTask);
+        assertNotNull(actualTask.getId());
+        assertEquals(expectedTask, actualTask);
     }
 
     @Test
@@ -49,9 +49,9 @@ class InMemoryTaskManagerTest {
         Epic actualEpic = taskManager.addNewTask(epic);
 
         // check
-        Assertions.assertNotNull(actualEpic);
-        Assertions.assertNotNull(actualEpic.getId());
-        Assertions.assertEquals(expectedEpic, actualEpic);
+        assertNotNull(actualEpic);
+        assertNotNull(actualEpic.getId());
+        assertEquals(expectedEpic, actualEpic);
     }
 
     @Test
@@ -66,22 +66,21 @@ class InMemoryTaskManagerTest {
         Subtask actualSubtask = taskManager.addNewTask(subtask);
 
         // check
-        Assertions.assertNotNull(actualSubtask);
-        Assertions.assertNotNull(actualSubtask.getId());
-        Assertions.assertEquals(expectedSubtask, actualSubtask);
+        assertNotNull(actualSubtask);
+        assertNotNull(actualSubtask.getId());
+        assertEquals(expectedSubtask, actualSubtask);
     }
 
     @Test
     void addNewTask_shouldNotSaveSubtaskWithoutExistEpic() {
         // prepare
         Subtask subtask = new Subtask("subtask_1", "subtask_description_1", 1);
-        Subtask expectedSubtask = new Subtask(2 ,"subtask_1", "subtask_description_1", 1, TaskStatus.NEW);
 
         // do
         Subtask actualSubtask = taskManager.addNewTask(subtask);
 
         // check
-        Assertions.assertNull(actualSubtask);
+        assertNull(actualSubtask);
     }
 
 
@@ -99,7 +98,7 @@ class InMemoryTaskManagerTest {
         Task actualUpdatedTask = taskManager.updateTask(updatedTask);
 
         // check
-        Assertions.assertEquals(expectedUpdatedTask, actualUpdatedTask);
+        assertEquals(expectedUpdatedTask, actualUpdatedTask);
     }
 
     @Test
@@ -115,7 +114,7 @@ class InMemoryTaskManagerTest {
         Epic actualUpdatedEpic = taskManager.updateTask(updatedEpic);
 
         // check
-        Assertions.assertEquals(expectedUpdatedEpic, actualUpdatedEpic);
+        assertEquals(expectedUpdatedEpic, actualUpdatedEpic);
     }
 
     @Test
@@ -133,7 +132,69 @@ class InMemoryTaskManagerTest {
         Subtask actualUpdatedSubtask = taskManager.updateTask(updatedSubtask);
 
         // check
-        Assertions.assertEquals(expectedUpdatedSubtask, actualUpdatedSubtask);
+        assertEquals(expectedUpdatedSubtask, actualUpdatedSubtask);
+    }
+
+    @Test
+    void updateTask_shouldUpdateSubtaskEpicId() {
+        // prepare
+        Epic epic1 = new Epic("epic_1", "epic_description_1");
+        Epic epic2 = new Epic("epic_1", "epic_description_1");
+        taskManager.addNewTask(epic1);
+        taskManager.addNewTask(epic2);
+        Subtask subtask = new Subtask("subtask_1", "subtask_description_1", 1);
+        Subtask updateSubtask = new Subtask(3,"subtask_1", "subtask_description_1", 2);
+        Subtask savedSubtask = taskManager.addNewTask(subtask);
+
+        // do
+        // check
+        assertEquals(1, savedSubtask.getEpicId());
+        Subtask updatedSubtask = taskManager.updateTask(updateSubtask);
+        assertEquals(2, updatedSubtask.getEpicId());
+        assertEquals(new ArrayList<>(), epic1.getEpicSubtasksId());
+        assertEquals(3, epic2.getEpicSubtasksId().get(0));
+    }
+
+    @Test
+    void refreshEpicStatus_shouldUpdateEpicStatusToDone() {
+        // prepare
+        Epic epic = new Epic("epic_1", "epic_description_1");
+        taskManager.addNewTask(epic);
+        Subtask subtask1 = new Subtask("subtask_1", "subtask_description_1", 1);
+        Subtask subtask2 = new Subtask("subtask_2", "subtask_description_2", 1);
+        Subtask subtask3 = new Subtask("subtask_3", "subtask_description_3", 1);
+        taskManager.addNewTask(subtask1);
+        taskManager.addNewTask(subtask2);
+        taskManager.addNewTask(subtask3);
+
+        // do
+        // check
+        assertEquals(TaskStatus.NEW, epic.getStatus());
+        taskManager.updateTask(new Subtask(2, "subtask_u_1", "subtask_description_u_1", TaskStatus.DONE));
+        taskManager.updateTask(new Subtask(3, "subtask_u_2", "subtask_description_u_2", TaskStatus.DONE));
+        taskManager.updateTask(new Subtask(4, "subtask_u_3", "subtask_description_u_3", TaskStatus.DONE));
+        assertEquals(TaskStatus.DONE, epic.getStatus());
+    }
+
+    @Test
+    void refreshEpicStatus_shouldUpdateEpicStatusToInProgress() {
+        // prepare
+        Epic epic = new Epic("epic_1", "epic_description_1");
+        taskManager.addNewTask(epic);
+        Subtask subtask1 = new Subtask("subtask_1", "subtask_description_1", 1);
+        Subtask subtask2 = new Subtask("subtask_2", "subtask_description_2", 1);
+        Subtask subtask3 = new Subtask("subtask_3", "subtask_description_3", 1);
+        taskManager.addNewTask(subtask1);
+        taskManager.addNewTask(subtask2);
+        taskManager.addNewTask(subtask3);
+
+        // do
+        // check
+        assertEquals(TaskStatus.NEW, epic.getStatus());
+        taskManager.updateTask(new Subtask(2, "subtask_u_1", "subtask_description_u_1"));
+        taskManager.updateTask(new Subtask(3, "subtask_u_2", "subtask_description_u_2", TaskStatus.DONE));
+        taskManager.updateTask(new Subtask(4, "subtask_u_3", "subtask_description_u_3", TaskStatus.DONE));
+        assertEquals(TaskStatus.IN_PROGRESS, epic.getStatus());
     }
 
     @Test
@@ -144,9 +205,9 @@ class InMemoryTaskManagerTest {
 
         // do
         // check
-        Assertions.assertNotNull(taskManager.getTask(savedTask.getId()));
+        assertNotNull(taskManager.getTask(savedTask.getId()));
         taskManager.deleteTask(savedTask.getId());
-        Assertions.assertNull(taskManager.getTask(savedTask.getId()));
+        assertNull(taskManager.getTask(savedTask.getId()));
     }
 
     @Test
@@ -157,9 +218,9 @@ class InMemoryTaskManagerTest {
 
         // do
         // check
-        Assertions.assertNotNull(taskManager.getEpic(savedEpic.getId()));
+        assertNotNull(taskManager.getEpic(savedEpic.getId()));
         taskManager.deleteTask(savedEpic.getId());
-        Assertions.assertNull(taskManager.getEpic(savedEpic.getId()));
+        assertNull(taskManager.getEpic(savedEpic.getId()));
     }
 
     @Test
@@ -176,9 +237,9 @@ class InMemoryTaskManagerTest {
 
         // do
         // check
-        Assertions.assertNotNull(taskManager.getEpicSubtasks(savedEpic.getId()));
+        assertNotNull(taskManager.getEpicSubtasks(savedEpic.getId()));
         taskManager.deleteEpicSubtasks(savedEpic.getId());
-        Assertions.assertTrue(taskManager.getEpicSubtasks(savedEpic.getId()).isEmpty());
+        assertTrue(taskManager.getEpicSubtasks(savedEpic.getId()).isEmpty());
     }
 
     @Test
@@ -191,9 +252,9 @@ class InMemoryTaskManagerTest {
 
         // do
         // check
-        Assertions.assertNotNull(taskManager.getSubtask(savedSubtask.getId()));
+        assertNotNull(taskManager.getSubtask(savedSubtask.getId()));
         taskManager.deleteTask(savedSubtask.getId());
-        Assertions.assertNull(taskManager.getSubtask(savedSubtask.getId()));
+        assertNull(taskManager.getSubtask(savedSubtask.getId()));
     }
 
     @Test
@@ -208,13 +269,13 @@ class InMemoryTaskManagerTest {
 
         // do
         // check
-        Assertions.assertNotNull(taskManager.getTask(savedTask1.getId()));
-        Assertions.assertNotNull(taskManager.getTask(savedTask2.getId()));
-        Assertions.assertNotNull(taskManager.getTask(savedTask3.getId()));
+        assertNotNull(taskManager.getTask(savedTask1.getId()));
+        assertNotNull(taskManager.getTask(savedTask2.getId()));
+        assertNotNull(taskManager.getTask(savedTask3.getId()));
         taskManager.deleteAllTasks();
-        Assertions.assertNull(taskManager.getTask(savedTask1.getId()));
-        Assertions.assertNull(taskManager.getTask(savedTask2.getId()));
-        Assertions.assertNull(taskManager.getTask(savedTask3.getId()));
+        assertNull(taskManager.getTask(savedTask1.getId()));
+        assertNull(taskManager.getTask(savedTask2.getId()));
+        assertNull(taskManager.getTask(savedTask3.getId()));
     }
 
     @Test
@@ -229,13 +290,13 @@ class InMemoryTaskManagerTest {
 
         // do
         // check
-        Assertions.assertNotNull(taskManager.getEpic(savedEpic1.getId()));
-        Assertions.assertNotNull(taskManager.getEpic(savedEpic2.getId()));
-        Assertions.assertNotNull(taskManager.getEpic(savedEpic3.getId()));
+        assertNotNull(taskManager.getEpic(savedEpic1.getId()));
+        assertNotNull(taskManager.getEpic(savedEpic2.getId()));
+        assertNotNull(taskManager.getEpic(savedEpic3.getId()));
         taskManager.deleteAllEpic();
-        Assertions.assertNull(taskManager.getEpic(savedEpic1.getId()));
-        Assertions.assertNull(taskManager.getEpic(savedEpic2.getId()));
-        Assertions.assertNull(taskManager.getEpic(savedEpic3.getId()));
+        assertNull(taskManager.getEpic(savedEpic1.getId()));
+        assertNull(taskManager.getEpic(savedEpic2.getId()));
+        assertNull(taskManager.getEpic(savedEpic3.getId()));
     }
 
     @Test
@@ -252,13 +313,13 @@ class InMemoryTaskManagerTest {
 
         // do
         // check
-        Assertions.assertNotNull(taskManager.getSubtask(savedSubtask1.getId()));
-        Assertions.assertNotNull(taskManager.getSubtask(savedSubtask2.getId()));
-        Assertions.assertNotNull(taskManager.getSubtask(savedSubtask3.getId()));
+        assertNotNull(taskManager.getSubtask(savedSubtask1.getId()));
+        assertNotNull(taskManager.getSubtask(savedSubtask2.getId()));
+        assertNotNull(taskManager.getSubtask(savedSubtask3.getId()));
         taskManager.deleteAllSubtasks();
-        Assertions.assertNull(taskManager.getSubtask(savedSubtask1.getId()));
-        Assertions.assertNull(taskManager.getSubtask(savedSubtask2.getId()));
-        Assertions.assertNull(taskManager.getSubtask(savedSubtask3.getId()));
+        assertNull(taskManager.getSubtask(savedSubtask1.getId()));
+        assertNull(taskManager.getSubtask(savedSubtask2.getId()));
+        assertNull(taskManager.getSubtask(savedSubtask3.getId()));
     }
 
     @Test
@@ -271,8 +332,8 @@ class InMemoryTaskManagerTest {
         Task actualTask = taskManager.addNewTask(task);
 
         // check
-        Assertions.assertNotNull(taskManager.getTask(actualTask.getId()));
-        Assertions.assertEquals(expectedTask, taskManager.getTask(actualTask.getId()));
+        assertNotNull(taskManager.getTask(actualTask.getId()));
+        assertEquals(expectedTask, taskManager.getTask(actualTask.getId()));
     }
 
     @Test
@@ -285,8 +346,8 @@ class InMemoryTaskManagerTest {
         Epic actualEpic = taskManager.addNewTask(epic);
 
         // check
-        Assertions.assertNotNull(taskManager.getEpic(actualEpic.getId()));
-        Assertions.assertEquals(expectedEpic, taskManager.getEpic(actualEpic.getId()));
+        assertNotNull(taskManager.getEpic(actualEpic.getId()));
+        assertEquals(expectedEpic, taskManager.getEpic(actualEpic.getId()));
     }
 
     @Test
@@ -301,8 +362,8 @@ class InMemoryTaskManagerTest {
         Subtask actualSubtask = taskManager.addNewTask(subtask);
 
         // check
-        Assertions.assertNotNull(taskManager.getSubtask(actualSubtask.getId()));
-        Assertions.assertEquals(expectedSubtask, taskManager.getSubtask(actualSubtask.getId()));
+        assertNotNull(taskManager.getSubtask(actualSubtask.getId()));
+        assertEquals(expectedSubtask, taskManager.getSubtask(actualSubtask.getId()));
     }
 
     @Test
@@ -322,10 +383,10 @@ class InMemoryTaskManagerTest {
         taskManager.addNewTask(task3);
 
         // check
-        Assertions.assertNotNull(taskManager.getAllTasks());
-        Assertions.assertEquals(expectedTask1, taskManager.getAllTasks().get(0));
-        Assertions.assertEquals(expectedTask2, taskManager.getAllTasks().get(1));
-        Assertions.assertEquals(expectedTask3, taskManager.getAllTasks().get(2));
+        assertNotNull(taskManager.getAllTasks());
+        assertEquals(expectedTask1, taskManager.getAllTasks().get(0));
+        assertEquals(expectedTask2, taskManager.getAllTasks().get(1));
+        assertEquals(expectedTask3, taskManager.getAllTasks().get(2));
 
     }
 
@@ -345,10 +406,10 @@ class InMemoryTaskManagerTest {
         taskManager.addNewTask(epic3);
 
         // check
-        Assertions.assertNotNull(taskManager.getAllEpic());
-        Assertions.assertEquals(expectedEpic1, taskManager.getAllEpic().get(0));
-        Assertions.assertEquals(expectedEpic2, taskManager.getAllEpic().get(1));
-        Assertions.assertEquals(expectedEpic3, taskManager.getAllEpic().get(2));
+        assertNotNull(taskManager.getAllEpic());
+        assertEquals(expectedEpic1, taskManager.getAllEpic().get(0));
+        assertEquals(expectedEpic2, taskManager.getAllEpic().get(1));
+        assertEquals(expectedEpic3, taskManager.getAllEpic().get(2));
     }
 
     @Test
@@ -369,10 +430,10 @@ class InMemoryTaskManagerTest {
         taskManager.addNewTask(subtask3);
 
         // check
-        Assertions.assertNotNull(taskManager.getAllSubtasks());
-        Assertions.assertEquals(expectedSubtask1, taskManager.getAllSubtasks().get(0));
-        Assertions.assertEquals(expectedSubtask2, taskManager.getAllSubtasks().get(1));
-        Assertions.assertEquals(expectedSubtask3, taskManager.getAllSubtasks().get(2));
+        assertNotNull(taskManager.getAllSubtasks());
+        assertEquals(expectedSubtask1, taskManager.getAllSubtasks().get(0));
+        assertEquals(expectedSubtask2, taskManager.getAllSubtasks().get(1));
+        assertEquals(expectedSubtask3, taskManager.getAllSubtasks().get(2));
     }
 
     @Test
@@ -393,10 +454,10 @@ class InMemoryTaskManagerTest {
         taskManager.addNewTask(subtask3);
 
         // check
-        List epicSubtasks = taskManager.getEpicSubtasks(savedEpic.getId());
-        Assertions.assertNotNull(epicSubtasks);
-        Assertions.assertEquals(expectedSubtask1, epicSubtasks.get(0));
-        Assertions.assertEquals(expectedSubtask2, epicSubtasks.get(1));
-        Assertions.assertEquals(expectedSubtask3, epicSubtasks.get(2));
+        List<Subtask> epicSubtasks = taskManager.getEpicSubtasks(savedEpic.getId());
+        assertNotNull(epicSubtasks);
+        assertEquals(expectedSubtask1, epicSubtasks.get(0));
+        assertEquals(expectedSubtask2, epicSubtasks.get(1));
+        assertEquals(expectedSubtask3, epicSubtasks.get(2));
     }
 }
