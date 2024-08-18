@@ -41,6 +41,10 @@ public class Task {
         return name;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
     public Integer getId() {
         return id;
     }

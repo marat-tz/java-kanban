@@ -38,11 +38,11 @@ public class Subtask extends Task {
         return epicId;
     }
 
-    public void setEpicId(Integer epicId) {
-        if (Objects.nonNull(epicId)) {
-            this.epicId = epicId;
+    public void setEpicId(Epic epic) {
+        if (Objects.nonNull(epic)) {
+            this.epicId = epic.getId();
         } else {
-            System.out.println("Epic id can't be null");
+            System.out.println("Epic can't be null");
         }
     }
 

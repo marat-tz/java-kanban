@@ -20,10 +20,11 @@ class SubtaskTest {
     @Test
     void setEpic_shouldSetEpicId() {
         // prepare
+        Epic epic = new Epic(2, "epic_1", "epic_description_1");
         Subtask subtask = new Subtask(2, "subtask_1", "subtask_description_1", 1);
 
         // do
-        subtask.setEpicId(2);
+        subtask.setEpicId(epic);
         // check
         assertEquals(2, subtask.getEpicId());
     }
@@ -38,5 +39,16 @@ class SubtaskTest {
 
         // check
         assertNotNull(subtask.getEpicId());
+    }
+
+    @Test
+    void checkEquals_subtaskShouldBeEqualsSubtask() {
+        // prepare
+        Subtask subtask1 = new Subtask(1, "subtask_1", "subtask_description_1");
+        Subtask subtask2 = new Subtask(1, "subtask_2", "subtask_description_2");
+
+        // do
+        // check
+        assertEquals(subtask1, subtask2);
     }
 }

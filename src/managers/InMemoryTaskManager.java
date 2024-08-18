@@ -144,7 +144,7 @@ public class InMemoryTaskManager implements TaskManager {
                 }
 
                 if (subtaskUpdate.getEpicId() == null) {
-                    subtaskUpdate.setEpicId(subtaskMap.getEpicId());
+                    subtaskUpdate.setEpicId(idToEpic.get(subtaskMap.getEpicId()));
                     idToSubtask.put(subtaskId, subtaskUpdate);
                     refreshEpicStatus(subtaskUpdate.getEpicId());
                     System.out.print("Updated subtask: " + subtaskUpdate);

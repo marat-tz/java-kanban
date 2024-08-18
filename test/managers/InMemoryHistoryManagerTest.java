@@ -54,6 +54,20 @@ class InMemoryHistoryManagerTest {
     }
 
     @Test
+    void add_shouldSavePreviousVersionOfTask() {
+        // prepare
+        Task task1 = new Task(1,"task_1", "description_1");
+
+        // do
+        historyManager.add(task1);
+
+        // check
+        assertEquals(1, task1.getId());
+        task1.setId(2);
+        assertEquals(1, historyManager.getHistory().get(0).getId());
+    }
+
+    @Test
     void add_shouldRemoveFirstTaskInHistoryIfListSizeIsBiggerThan10() {
         // prepare
         Task task;

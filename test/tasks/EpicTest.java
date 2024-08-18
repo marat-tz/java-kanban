@@ -111,4 +111,15 @@ class EpicTest {
         epic1.clearSubtasks();
         assertEquals(new ArrayList<>(), epic1.getEpicSubtasksId());
     }
+
+    @Test
+    void checkEquals_epicShouldBeEqualsEpic() {
+        // prepare
+        Epic epic1 = new Epic(1, "epic_1", "epic_description_1");
+        Epic epic2 = new Epic(1, "epic_2", "epic_description_2");
+
+        // do
+        // check
+        assertEquals(epic1, epic2);
+    }
 }

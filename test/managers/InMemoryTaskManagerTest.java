@@ -24,8 +24,8 @@ class InMemoryTaskManagerTest {
     @Test
     void addNewTask_shouldSaveTask() {
         // prepare
-        Task task = new Task("task_1", "description_1");
-        Task expectedTask = new Task(1, "task_1", "description_1");
+        Task task = new Task("task_1", "description_1", TaskStatus.NEW);
+        Task expectedTask = new Task(1, "task_1", "description_1", TaskStatus.NEW);
 
         // do
         Task actualTask = taskManager.addNewTask(task);
