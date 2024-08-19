@@ -21,7 +21,7 @@ public class InMemoryHistoryManager implements HistoryManager {
                 taskHistory.remove(0);
             }
 
-            Task copyTask = new Task(task.getId(), task.getName(), task.getDescription(), task.getStatus());;
+            Task copyTask = new Task(task.getId(), task.getName(), task.getDescription(), task.getStatus());
             taskHistory.add(copyTask);
 
         } else {
