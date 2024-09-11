@@ -48,7 +48,7 @@ public class InMemoryHistoryManager implements HistoryManager {
             head = nextNode;
             System.out.println("Head node links removed");
 
-        // is tail
+            // is tail
         } else if (nextNode == null) {
             prevNode.next = null;
             tail = prevNode;
@@ -81,7 +81,7 @@ public class InMemoryHistoryManager implements HistoryManager {
             tempNode = head.next;
             result.add(head.task);
             result.add(tempNode.task);
-            while (tempNode.next != null){
+            while (tempNode.next != null) {
                 tempNode = tempNode.next;
                 result.add(tempNode.task);
             }
