@@ -5,8 +5,11 @@ import tasks.Subtask;
 import tasks.Task;
 import tasks.TaskStatus;
 
-import java.util.*;
-
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 public class InMemoryTaskManager implements TaskManager {
     private final Map<Integer, Task> idTask = new HashMap<>();

@@ -65,8 +65,8 @@ public class InMemoryHistoryManager implements HistoryManager {
     // Реализация метода getHistory должна перекладывать задачи из связного списка
     // в ArrayList для формирования ответа.
     @Override
-    public ArrayList<Task> getHistory() {
-        ArrayList<Task> result = new ArrayList<>();
+    public List<Task> getHistory() {
+        List<Task> result = new ArrayList<>();
         Node tempNode;
 
         if (head == null) {
