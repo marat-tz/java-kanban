@@ -52,6 +52,18 @@ class InMemoryTaskManagerTest {
     }
 
     @Test
+    void addNewTask_shouldNotSaveEpicAsTask() {
+        // prepare
+        Task epic = new Epic("epic_1", "epic_description_1");
+
+        // do
+        Task actualEpic = taskManager.addNewTask(epic);
+
+        // check
+        assertNull(actualEpic);
+    }
+
+    @Test
     void addNewTask_shouldSaveSubtaskWithExistEpic() {
         // prepare
         Epic epic = new Epic("epic_1", "epic_description_1");

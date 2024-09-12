@@ -39,6 +39,8 @@ public class InMemoryTaskManager implements TaskManager {
             newId = generateNewId();
             newTask.setId(newId);
 
+            // в данный метод должны попадать только типы Task
+            // для потомков созданы отдельные методы, с целью уменьшить вероятность ошибок
             if (newTask.getClass() == Task.class) {
                 idTask.put(newTask.getId(), newTask);
                 System.out.println("Added task: " + newTask);

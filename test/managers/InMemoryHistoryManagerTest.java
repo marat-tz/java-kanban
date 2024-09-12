@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import tasks.Epic;
 import tasks.Subtask;
 import tasks.Task;
+import tasks.TaskStatus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,15 +56,15 @@ class InMemoryHistoryManagerTest {
     @Test
     void add_shouldSavePreviousVersionOfTask() {
         // prepare
-        Task task1 = new Task(5,"task_1", "description_1");
+        Task task1 = new Task(5,"task_1", "description_1", TaskStatus.NEW);
 
         // do
         historyManager.add(task1);
 
         // check
-        assertEquals(5, task1.getId());
-        task1.setId(6);
-        assertEquals(5, historyManager.getHistory().get(0).getId());
+        assertEquals(TaskStatus.NEW, task1.getStatus());
+        task1.setStatus(TaskStatus.DONE);
+        assertEquals(TaskStatus.NEW, historyManager.getHistory().get(0).getStatus());
     }
 
     @Test
