@@ -9,33 +9,39 @@ public class Task {
     protected int id;
     protected TaskStatus status;
 
+    protected TaskType type = TaskType.TASK;
+
     public Task(int id) {
         this.id = id;
     }
 
-    public Task(String name, String description, TaskStatus status) {
+    public Task(String name, String description, TaskStatus status, TaskType type) {
         this.name = name;
         this.description = description;
         this.status = status;
+        this.type = type;
     }
 
-    public Task(String name, String description) {
+    public Task(String name, String description, TaskType type) {
         this.name = name;
         this.description = description;
         this.status = TaskStatus.NEW;
+        this.type = type;
     }
 
-    public Task(int id, String name, String description, TaskStatus status) {
+    public Task(int id, String name, String description, TaskStatus status, TaskType type) {
         this.name = name;
         this.description = description;
         this.id = id;
         this.status = status;
+        this.type = type;
     }
 
-    public Task(int id, String name, String description) {
+    public Task(int id, String name, String description, TaskType type) {
         this.name = name;
         this.description = description;
         this.id = id;
+        this.type = type;
     }
 
     public String getName() {
@@ -85,9 +91,9 @@ public class Task {
 
     @Override
     public String toString() {
-        return "tasks.Task{" +
-                "name='" + name + '\'' +
-                ", description='" + description + '\'' +
+        return
+                id + '\'' +
+                description + '\'' +
                 ", id=" + id +
                 ", status=" + status +
                 '}';
