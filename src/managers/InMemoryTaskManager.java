@@ -4,6 +4,7 @@ import tasks.Epic;
 import tasks.Subtask;
 import tasks.Task;
 import tasks.TaskStatus;
+import tasks.TaskType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,7 +42,7 @@ public class InMemoryTaskManager implements TaskManager {
 
             // в данный метод должны попадать только типы Task
             // для потомков созданы отдельные методы, с целью уменьшить вероятность ошибок
-            if (newTask.getClass() == Task.class) {
+            if (newTask.getType() == TaskType.TASK) {
                 idTask.put(newTask.getId(), newTask);
                 System.out.println("Added task: " + newTask);
                 return newTask;
