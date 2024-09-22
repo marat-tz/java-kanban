@@ -91,12 +91,11 @@ public class Task {
 
     @Override
     public String toString() {
-        return
-                id + '\'' +
-                description + '\'' +
-                ", id=" + id +
-                ", status=" + status +
-                '}';
+        return  id + '\''
+                + type.toString() + '\''
+                + name + '\''
+                + status + '\''
+                + description;
     }
 
 }
