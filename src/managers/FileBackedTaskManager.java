@@ -3,8 +3,12 @@ package managers;
 import tasks.Epic;
 import tasks.Subtask;
 import tasks.Task;
+import tasks.TaskStatus;
 
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
 
@@ -14,12 +18,61 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         this.file = file;
     }
 
-    private void save() {
+    // Исключения вида IOException нужно отлавливать внутри метода save и выкидывать собственное
+    // непроверяемое исключение ManagerSaveException.
+    // Благодаря этому можно не менять сигнатуру методов интерфейса менеджера.
 
+    // Создайте метод save без параметров — он будет сохранять текущее состояние менеджера в указанный файл.
+    // Он должен сохранять все задачи, подзадачи и эпики.
+    private void save() {
+        try (Writer fileWriter = new FileWriter(file)) {
+            fileWriter.write("ID,TYPE,NAME,STATUS,DESCRIPTION,EPIC\n");
+            for (int i = 0; i < getLastId(); i++) {
+                fileWriter.write(getTask(i).toString());
+            }
+        } catch (IOException ex) {
+            //throw new ManagerSaveException();
+        }
     }
 
     private Task fromString(String value) {
-         return null;
+        String[] temp = value.split(",");
+        int id = Integer.parseInt(temp[0]);
+        String name = temp[2];
+        String description = temp[4];
+        TaskStatus status;
+
+        switch (temp[3]) {
+            case "TaskStatus.NEW":
+                status = TaskStatus.NEW;
+                break;
+            case "TaskStatus.IN_PROGRESS":
+                status = TaskStatus.IN_PROGRESS;
+                break;
+            case "TaskStatus.DONE":
+                status = TaskStatus.DONE;
+                break;
+            default:
+                status = TaskStatus.NEW;
+        }
+
+        switch (temp[1]) {
+            case "TaskType.TASK":
+                return new Task(id, name, description, status);
+            case "TaskType.SUBTASK":
+                int epicId = Integer.parseInt(temp[5]);
+                return new Subtask(id, name, description, epicId, status);
+            case "TaskType.EPIC":
+                return new Epic(id, name, description, status);
+            default:
+                return null;
+        }
+    }
+
+    // будет восстанавливать данные менеджера из файла при запуске программы
+    public static FileBackedTaskManager loadFromFile(File file) {
+
+        return null;
     }
 
     @Override
