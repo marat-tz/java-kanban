@@ -6,10 +6,14 @@ import tasks.Subtask;
 import tasks.Task;
 import tasks.TaskStatus;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.HashMap;
+import java.util.Map;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
 
@@ -19,11 +23,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         this.file = file;
     }
 
-    // Исключения вида IOException нужно отлавливать внутри метода save и выкидывать собственное
-    // непроверяемое исключение ManagerSaveException.
-    // Благодаря этому можно не менять сигнатуру методов интерфейса менеджера.
-
-    // Создайте метод save без параметров — он будет сохранять текущее состояние менеджера в указанный файл.
+    // будет сохранять текущее состояние менеджера в указанный файл.
     // Он должен сохранять все задачи, подзадачи и эпики.
     private void save() throws ManagerSaveException {
         try (Writer fileWriter = new FileWriter(file)) {
@@ -36,7 +36,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         }
     }
 
-    private Task fromString(String value) {
+    private static Task fromString(String value) {
         String[] temp = value.split(",");
         int id = Integer.parseInt(temp[0]);
         String name = temp[2];
@@ -72,8 +72,31 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     // будет восстанавливать данные менеджера из файла при запуске программы
     public static FileBackedTaskManager loadFromFile(File file) {
+        Map<Integer, Task> tempTask = new HashMap<>();
+        Map<Integer, Subtask> tempSub = new HashMap<>();
+        Map<Integer, Epic> tempEpic = new HashMap<>();
 
-        return null;
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+
+            while (br.ready()) {
+                Task task = fromString(br.readLine());
+                switch (task.getType()) {
+                    case TASK:
+                        tempTask.put(task.getId(), task);
+                        break;
+                    case SUBTASK:
+                        tempSub.put(task.getId(), (Subtask) task);
+                        break;
+                    case EPIC:
+                        tempEpic.put(task.getId(), (Epic) task);
+                }
+            }
+
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+
+        return new FileBackedTaskManager(file);
     }
 
     @Override
