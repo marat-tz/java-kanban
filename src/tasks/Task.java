@@ -15,33 +15,29 @@ public class Task {
         this.id = id;
     }
 
-    public Task(String name, String description, TaskStatus status, TaskType type) {
+    public Task(String name, String description, TaskStatus status) {
         this.name = name;
         this.description = description;
         this.status = status;
-        this.type = type;
     }
 
-    public Task(String name, String description, TaskType type) {
+    public Task(String name, String description) {
         this.name = name;
         this.description = description;
         this.status = TaskStatus.NEW;
-        this.type = type;
     }
 
-    public Task(int id, String name, String description, TaskStatus status, TaskType type) {
+    public Task(int id, String name, String description, TaskStatus status) {
         this.name = name;
         this.description = description;
         this.id = id;
         this.status = status;
-        this.type = type;
     }
 
-    public Task(int id, String name, String description, TaskType type) {
+    public Task(int id, String name, String description) {
         this.name = name;
         this.description = description;
         this.id = id;
-        this.type = type;
     }
 
     public String getName() {
@@ -54,6 +50,10 @@ public class Task {
 
     public Integer getId() {
         return id;
+    }
+
+    public TaskType getType() {
+        return type;
     }
 
     public void setId(Integer id) {
