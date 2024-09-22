@@ -91,11 +91,7 @@ public class Task {
 
     @Override
     public String toString() {
-        return  id + '\''
-                + type.toString() + '\''
-                + name + '\''
-                + status + '\''
-                + description;
+        return String.format("%s,%s,%s,%s,%s", id, type, name, status, description);
     }
 
 }
