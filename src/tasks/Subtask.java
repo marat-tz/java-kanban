@@ -50,12 +50,6 @@ public class Subtask extends Task {
 
     @Override
     public String toString() {
-        return "tasks.Subtask{" +
-                "name='" + name + '\'' +
-                ", description='" + description + '\'' +
-                ", id=" + id +
-                ", status=" + status +
-                ", epic=" + epicId +
-                '}';
+        return String.format("%s,%s,%s,%s,%s,%s", id, type, name, status, description, epicId);
     }
 }
