@@ -1,5 +1,6 @@
 package managers;
 
+import exceptions.ManagerSaveException;
 import tasks.Epic;
 import tasks.Subtask;
 import tasks.Task;
@@ -24,14 +25,14 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     // Создайте метод save без параметров — он будет сохранять текущее состояние менеджера в указанный файл.
     // Он должен сохранять все задачи, подзадачи и эпики.
-    private void save() {
+    private void save() throws ManagerSaveException {
         try (Writer fileWriter = new FileWriter(file)) {
             fileWriter.write("ID,TYPE,NAME,STATUS,DESCRIPTION,EPIC\n");
             for (int i = 0; i < getLastId(); i++) {
                 fileWriter.write(getTask(i).toString());
             }
         } catch (IOException ex) {
-            //throw new ManagerSaveException();
+            throw new ManagerSaveException(ex.getMessage());
         }
     }
 
@@ -78,73 +79,135 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     @Override
     public Task addNewTask(Task newTask) {
         Task task = super.addNewTask(newTask);
-        save();
+
+        try {
+            save();
+        } catch (ManagerSaveException ex) {
+            ex.printStackTrace();
+        }
+
         return task;
     }
 
     @Override
     public Epic addNewTask(Epic newEpic) {
         Epic epic = super.addNewTask(newEpic);
-        save();
+
+        try {
+            save();
+        } catch (ManagerSaveException ex) {
+            ex.printStackTrace();
+        }
+
         return epic;
     }
 
     @Override
     public Subtask addNewTask(Subtask newSubtask) {
         Subtask subtask = super.addNewTask(newSubtask);
-        save();
+
+        try {
+            save();
+        } catch (ManagerSaveException ex) {
+            ex.printStackTrace();
+        }
+
         return subtask;
     }
 
     @Override
     public Task updateTask(Task updatedTask) {
         Task task = super.updateTask(updatedTask);
-        save();
+
+        try {
+            save();
+        } catch (ManagerSaveException ex) {
+            ex.printStackTrace();
+        }
+
         return task;
     }
 
     @Override
     public Subtask updateTask(Subtask subtaskUpdate) {
         Subtask subtask = super.updateTask(subtaskUpdate);
-        save();
+
+        try {
+            save();
+        } catch (ManagerSaveException ex) {
+            ex.printStackTrace();
+        }
+
         return subtask;
     }
 
     @Override
     public Epic updateTask(Epic epicUpdate) {
         Epic epic = super.updateTask(epicUpdate);
-        save();
+
+        try {
+            save();
+        } catch (ManagerSaveException ex) {
+            ex.printStackTrace();
+        }
+
         return epic;
     }
 
     @Override
     public Task deleteTask(Integer taskId) {
         Task task =  super.deleteTask(taskId);
-        save();
+
+        try {
+            save();
+        } catch (ManagerSaveException ex) {
+            ex.printStackTrace();
+        }
+
         return task;
     }
 
     @Override
     public void deleteAllTasks() {
         super.deleteAllTasks();
-        save();
+
+        try {
+            save();
+        } catch (ManagerSaveException ex) {
+            ex.printStackTrace();
+        }
     }
 
     @Override
     public void deleteAllSubtasks() {
         super.deleteAllSubtasks();
-        save();
+
+        try {
+            save();
+        } catch (ManagerSaveException ex) {
+            ex.printStackTrace();
+        }
     }
 
     @Override
     public void deleteAllEpic() {
         super.deleteAllEpic();
-        save();
+
+        try {
+            save();
+        } catch (ManagerSaveException ex) {
+            ex.printStackTrace();
+        }
     }
 
     @Override
     public void deleteEpicSubtasks(Integer epicId) {
         super.deleteEpicSubtasks(epicId);
-        save();
+
+        try {
+            save();
+        } catch (ManagerSaveException ex) {
+            ex.printStackTrace();
+        }
     }
 }
