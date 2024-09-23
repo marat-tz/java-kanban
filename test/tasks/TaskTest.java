@@ -86,7 +86,7 @@ class TaskTest {
     void checkEquals_taskShouldBeEqualsTask() {
         // prepare
         Task task1 = new Task(1, "task_1", "description_1");
-        Task task2 = new Task(1, "task_2", "description_2");
+        Task task2 = new Task(1, "task_1", "description_1");
 
         // do
         // check
