@@ -1,6 +1,6 @@
 package managers;
 
-import exceptions.ManagerSaveException;
+import exceptions.ManagerLoadException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import tasks.Epic;
@@ -57,7 +57,7 @@ public class FileBackedTaskManagerTest {
         FileBackedTaskManager newManager = null;
         try {
             newManager = taskManager.loadFromFile(file);
-        } catch (ManagerSaveException exception) {
+        } catch (ManagerLoadException exception) {
             exception.printStackTrace();
         }
 
@@ -100,6 +100,37 @@ public class FileBackedTaskManagerTest {
 
 
         assertTrue(isTaskInFile && isEpicInFile && isSubInFile);
+    }
+
+    @Test
+    void save_shouldLoadTasks() {
+        // prepare
+        Task task = new Task("Task 1", "Task Description");
+        Epic epic = new Epic("Epic 1", "Epic Description");
+
+        // do
+        Task actualTask = taskManager.addNewTask(task);
+        Epic actualEpic = taskManager.addNewTask(epic);
+
+        Subtask subtask = new Subtask("Subtask 1", "Subtask Description", epic.getId());
+        Subtask actualSub = taskManager.addNewTask(subtask);
+
+        // check
+        FileBackedTaskManager manager = new FileBackedTaskManager(file);
+
+        try {
+            manager.loadFromFile(file);
+        } catch (ManagerLoadException | NullPointerException ex) {
+            ex.printStackTrace();
+        }
+
+        Task loadTask = manager.getTask(0);
+        Epic loadEpic = manager.getEpic(1);
+        Subtask loadSub = manager.getSubtask(2);
+
+        assertTrue(actualTask.equals(loadTask));
+        assertTrue(actualEpic.equals(loadEpic));
+        assertTrue(actualSub.equals(loadSub));
     }
 
 }
