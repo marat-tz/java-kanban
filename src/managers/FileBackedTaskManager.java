@@ -13,6 +13,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.HashMap;
 import java.util.Map;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
@@ -25,12 +26,13 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     public FileBackedTaskManager(File file, Map<Integer, Task> tasks,
                                  Map<Integer, Epic> epics,
-                                 Map<Integer, Subtask> subtasks) {
+                                 Map<Integer, Subtask> subtasks,
+                                 int maxId) {
         this.file = file;
         this.idTask = tasks;
         this.idEpic = epics;
         this.idSubtask = subtasks;
-
+        this.taskId = maxId;
     }
 
     private void save() throws ManagerSaveException {
@@ -91,12 +93,15 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         }
     }
 
-    public FileBackedTaskManager loadFromFile(File file) throws ManagerLoadException {
+    public static FileBackedTaskManager loadFromFile(File file) throws ManagerLoadException {
+
+        Map<Integer, Task> tasks = new HashMap<>();
+        Map<Integer, Subtask> subtasks = new HashMap<>();
+        Map<Integer, Epic> epics = new HashMap<>();
+        int maxId = 0;
 
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
-            int lastId = 0;
             Task task = null;
-
             while (br.ready()) {
                 String currLine = br.readLine();
                 if (!currLine.startsWith("ID")) {
@@ -104,34 +109,31 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 }
 
                 if (task != null) {
-                    lastId = Math.max(lastId, task.getId() + taskId);
+                    maxId = Math.max(maxId, task.getId());
 
                     switch (task.getType()) {
                         case TASK:
-                            idTask.put(task.getId() + taskId, task); // прибавляем taskId на случай если уже есть задачи
+                            tasks.put(task.getId(), task); // прибавляем taskId на случай если уже есть задачи
                             break;
                         case SUBTASK:
-                            idSubtask.put(task.getId() + taskId, (Subtask) task);
+                            subtasks.put(task.getId(), (Subtask) task);
                             break;
                         case EPIC:
-                            idEpic.put(task.getId() + taskId, (Epic) task);
+                            epics.put(task.getId(), (Epic) task);
                     }
                 }
             }
 
-            taskId = lastId;
-
-            for (Subtask sub : idSubtask.values()) {
-                Epic epic = idEpic.get(sub.getEpicId());
+            for (Subtask sub : subtasks.values()) {
+                Epic epic = epics.get(sub.getEpicId());
                 epic.addSubtask(sub);
-                refreshEpicStatus(epic.getId());
             }
 
         } catch (IOException ex) {
             throw new ManagerLoadException(ex.getMessage());
         }
 
-        return new FileBackedTaskManager(file, idTask, idEpic, idSubtask);
+        return new FileBackedTaskManager(file, tasks, epics, subtasks, maxId);
     }
 
     @Override
