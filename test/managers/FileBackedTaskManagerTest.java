@@ -117,10 +117,10 @@ public class FileBackedTaskManagerTest {
         Subtask actualSub = taskManager.addNewTask(subtask);
 
         // check
-        FileBackedTaskManager manager = Managers.getFileBackedTaskManager(file);
+        FileBackedTaskManager manager = null;
 
         try {
-            manager.loadFromFile(file);
+            manager = taskManager.loadFromFile(file);
         } catch (ManagerLoadException | NullPointerException ex) {
             ex.printStackTrace();
         }
