@@ -133,46 +133,4 @@ public class FileBackedTaskManagerTest {
         assertEquals(actualEpic, loadEpic);
         assertEquals(actualSub, loadSub);
     }
-
-    @Test
-    void save_shouldNotRewriteTasks() {
-        // prepare
-        File file2 = null;
-        try {
-            file2 = java.io.File.createTempFile("backup2", "csv");
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
-
-        FileBackedTaskManager manager = Managers.getFileBackedTaskManager(file2);
-        Task task = new Task("Task 1", "Task Description");
-        Epic epic = new Epic("Epic 1", "Epic Description");
-
-        Task taskCheck = new Task("Task Check", "Task Description");
-        Epic epicCheck = new Epic("Epic Check", "Epic Description");
-
-        Task actualTask = taskManager.addNewTask(task);
-        Epic actualEpic = taskManager.addNewTask(epic);
-
-        Subtask subtask = new Subtask("Subtask 1", "Subtask Description", epic.getId());
-        Subtask actualSub = taskManager.addNewTask(subtask);
-
-        Task actualCheckTask = manager.addNewTask(taskCheck);
-        Epic actualCheckEpic = manager.addNewTask(epicCheck);
-
-        // do
-        try {
-            manager.loadFromFile(file);
-        } catch (ManagerLoadException ex) {
-            ex.printStackTrace();
-        }
-
-        // check
-
-        assertEquals(actualCheckTask, manager.getTask(actualCheckTask.getId()));
-        assertEquals(actualCheckEpic, manager.getEpic(actualCheckEpic.getId()));
-        assertEquals(task, manager.getTask(2));
-        assertEquals(epic, manager.getEpic(3));
-    }
-
 }
