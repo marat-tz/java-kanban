@@ -12,29 +12,47 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.HashMap;
+import java.util.Map;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
 
+    protected Map<Integer, Task> idTask = new HashMap<>();
+    protected Map<Integer, Subtask> idSubtask = new HashMap<>();
+    protected Map<Integer, Epic> idEpic = new HashMap<>();
     private final File file;
 
     public FileBackedTaskManager(File file) {
         this.file = file;
     }
 
+    public FileBackedTaskManager(File file, Map<Integer, Task> tasks,
+                                 Map<Integer, Epic> epics,
+                                 Map<Integer, Subtask> subtasks) {
+        this.file = file;
+        this.idTask = tasks;
+        this.idEpic = epics;
+        this.idSubtask = subtasks;
+
+    }
+
     private void save() throws ManagerSaveException {
         try (Writer fileWriter = new FileWriter(file)) {
-            fileWriter.write("ID,TYPE,NAME,STATUS,DESCRIPTION,EPIC\n");
 
-            for (Task task : getAllTasks()) {
-                fileWriter.write(task.toString() + "\n");
-            }
+            if (!getAllTasks().isEmpty() || !getAllSubtasks().isEmpty() || !getAllEpic().isEmpty()) {
+                fileWriter.write("ID,TYPE,NAME,STATUS,DESCRIPTION,EPIC\n");
 
-            for (Task epic : getAllEpic()) {
-                fileWriter.write(epic.toString() + "\n");
-            }
+                for (Task task : getAllTasks()) {
+                    fileWriter.write(task.toString() + "\n");
+                }
 
-            for (Task subtask : getAllSubtasks()) {
-                fileWriter.write(subtask.toString() + "\n");
+                for (Task epic : getAllEpic()) {
+                    fileWriter.write(epic.toString() + "\n");
+                }
+
+                for (Task subtask : getAllSubtasks()) {
+                    fileWriter.write(subtask.toString() + "\n");
+                }
             }
 
         } catch (IOException ex) {
@@ -77,44 +95,49 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     public FileBackedTaskManager loadFromFile(File file) throws ManagerSaveException {
+        Map<Integer, Task> tasks = new HashMap<>();
+        Map<Integer, Subtask> subtasks = new HashMap<>();
+        Map<Integer, Epic> epics = new HashMap<>();
 
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
             int lastId = 0;
+            Task task = null;
 
             while (br.ready()) {
-                Task task = fromString(br.readLine());
+                String currLine = br.readLine();
+                if (!currLine.startsWith("ID")) {
+                    task = fromString(currLine);
+                }
 
                 if (task != null) {
                     lastId = Math.max(lastId, task.getId());
 
                     switch (task.getType()) {
                         case TASK:
-                            idTask.put(task.getId(), task);
+                            tasks.put(task.getId(), task);
                             break;
                         case SUBTASK:
-                            idSubtask.put(task.getId(), (Subtask) task);
+                            subtasks.put(task.getId(), (Subtask) task);
                             break;
                         case EPIC:
-                            idEpic.put(task.getId(), (Epic) task);
+                            epics.put(task.getId(), (Epic) task);
                     }
                 }
             }
 
             taskId = lastId;
-            loadSubtasksIdsToEpics();
+
+            for (Subtask sub : subtasks.values()) {
+                Epic epic = epics.get(sub.getEpicId());
+                epic.addSubtask(sub);
+                refreshEpicStatus(epic.getId());
+            }
 
         } catch (IOException ex) {
             throw new ManagerSaveException(ex.getMessage());
         }
 
-        return new FileBackedTaskManager(file);
-    }
-
-    private void loadSubtasksIdsToEpics() {
-        for (Subtask sub : idSubtask.values()) {
-            Epic epic = idEpic.get(sub.getEpicId());
-            epic.addSubtask(sub);
-        }
+        return new FileBackedTaskManager(file, tasks, epics, subtasks);
     }
 
     @Override
