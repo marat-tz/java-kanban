@@ -13,14 +13,10 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
-import java.util.HashMap;
 import java.util.Map;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
 
-    protected Map<Integer, Task> idTask = new HashMap<>();
-    protected Map<Integer, Subtask> idSubtask = new HashMap<>();
-    protected Map<Integer, Epic> idEpic = new HashMap<>();
     private final File file;
 
     public FileBackedTaskManager(File file) {
