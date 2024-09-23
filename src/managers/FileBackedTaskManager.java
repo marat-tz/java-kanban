@@ -1,5 +1,6 @@
 package managers;
 
+import exceptions.ManagerLoadException;
 import exceptions.ManagerSaveException;
 import tasks.Epic;
 import tasks.Subtask;
@@ -68,13 +69,13 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         TaskStatus status;
 
         switch (temp[3]) {
-            case "TaskStatus.NEW":
+            case "NEW":
                 status = TaskStatus.NEW;
                 break;
-            case "TaskStatus.IN_PROGRESS":
+            case "IN_PROGRESS":
                 status = TaskStatus.IN_PROGRESS;
                 break;
-            case "TaskStatus.DONE":
+            case "DONE":
                 status = TaskStatus.DONE;
                 break;
             default:
@@ -82,22 +83,19 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         }
 
         switch (temp[1]) {
-            case "TaskType.TASK":
+            case "TASK":
                 return new Task(id, name, description, status);
-            case "TaskType.SUBTASK":
+            case "SUBTASK":
                 int epicId = Integer.parseInt(temp[5]);
                 return new Subtask(id, name, description, epicId, status);
-            case "TaskType.EPIC":
+            case "EPIC":
                 return new Epic(id, name, description, status);
             default:
                 return null;
         }
     }
 
-    public FileBackedTaskManager loadFromFile(File file) throws ManagerSaveException {
-        Map<Integer, Task> tasks = new HashMap<>();
-        Map<Integer, Subtask> subtasks = new HashMap<>();
-        Map<Integer, Epic> epics = new HashMap<>();
+    public FileBackedTaskManager loadFromFile(File file) throws ManagerLoadException {
 
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
             int lastId = 0;
@@ -110,34 +108,34 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 }
 
                 if (task != null) {
-                    lastId = Math.max(lastId, task.getId());
+                    lastId = Math.max(lastId, task.getId() + taskId);
 
                     switch (task.getType()) {
                         case TASK:
-                            tasks.put(task.getId(), task);
+                            idTask.put(task.getId() + taskId, task); // прибавляем taskId на случай если уже есть задачи
                             break;
                         case SUBTASK:
-                            subtasks.put(task.getId(), (Subtask) task);
+                            idSubtask.put(task.getId() + taskId, (Subtask) task);
                             break;
                         case EPIC:
-                            epics.put(task.getId(), (Epic) task);
+                            idEpic.put(task.getId() + taskId, (Epic) task);
                     }
                 }
             }
 
             taskId = lastId;
 
-            for (Subtask sub : subtasks.values()) {
-                Epic epic = epics.get(sub.getEpicId());
+            for (Subtask sub : idSubtask.values()) {
+                Epic epic = idEpic.get(sub.getEpicId());
                 epic.addSubtask(sub);
                 refreshEpicStatus(epic.getId());
             }
 
         } catch (IOException ex) {
-            throw new ManagerSaveException(ex.getMessage());
+            throw new ManagerLoadException(ex.getMessage());
         }
 
-        return new FileBackedTaskManager(file, tasks, epics, subtasks);
+        return new FileBackedTaskManager(file, idTask, idEpic, idSubtask);
     }
 
     @Override
