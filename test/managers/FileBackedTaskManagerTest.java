@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FileBackedTaskManagerTest {
@@ -54,9 +55,9 @@ public class FileBackedTaskManagerTest {
 
         // do
         taskManager.addNewTask(task);
-        FileBackedTaskManager newManager = null;
+        FileBackedTaskManager newManager = Managers.getFileBackedTaskManager(file);
         try {
-            newManager = taskManager.loadFromFile(file);
+            newManager.loadFromFile(file);
         } catch (ManagerLoadException exception) {
             exception.printStackTrace();
         }
@@ -116,7 +117,7 @@ public class FileBackedTaskManagerTest {
         Subtask actualSub = taskManager.addNewTask(subtask);
 
         // check
-        FileBackedTaskManager manager = new FileBackedTaskManager(file);
+        FileBackedTaskManager manager = Managers.getFileBackedTaskManager(file);
 
         try {
             manager.loadFromFile(file);
@@ -128,9 +129,50 @@ public class FileBackedTaskManagerTest {
         Epic loadEpic = manager.getEpic(1);
         Subtask loadSub = manager.getSubtask(2);
 
-        assertTrue(actualTask.equals(loadTask));
-        assertTrue(actualEpic.equals(loadEpic));
-        assertTrue(actualSub.equals(loadSub));
+        assertEquals(actualTask, loadTask);
+        assertEquals(actualEpic, loadEpic);
+        assertEquals(actualSub, loadSub);
+    }
+
+    @Test
+    void save_shouldNotRewriteTasks() {
+        // prepare
+        File file2 = null;
+        try {
+            file2 = java.io.File.createTempFile("backup2", "csv");
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+
+        FileBackedTaskManager manager = Managers.getFileBackedTaskManager(file2);
+        Task task = new Task("Task 1", "Task Description");
+        Epic epic = new Epic("Epic 1", "Epic Description");
+
+        Task taskCheck = new Task("Task Check", "Task Description");
+        Epic epicCheck = new Epic("Epic Check", "Epic Description");
+
+        Task actualTask = taskManager.addNewTask(task);
+        Epic actualEpic = taskManager.addNewTask(epic);
+
+        Subtask subtask = new Subtask("Subtask 1", "Subtask Description", epic.getId());
+        Subtask actualSub = taskManager.addNewTask(subtask);
+
+        Task actualCheckTask = manager.addNewTask(taskCheck);
+        Epic actualCheckEpic = manager.addNewTask(epicCheck);
+
+        // do
+        try {
+            manager.loadFromFile(file);
+        } catch (ManagerLoadException ex) {
+            ex.printStackTrace();
+        }
+
+        // check
+
+        assertEquals(actualCheckTask, manager.getTask(actualCheckTask.getId()));
+        assertEquals(actualCheckEpic, manager.getEpic(actualCheckEpic.getId()));
+        assertEquals(task, manager.getTask(2));
+        assertEquals(epic, manager.getEpic(3));
     }
 
 }
