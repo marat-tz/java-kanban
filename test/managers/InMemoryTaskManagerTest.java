@@ -362,7 +362,7 @@ class InMemoryTaskManagerTest {
     void getTask_shouldGetEpic() {
         // prepare
         Epic epic = new Epic("epic_1", "epic_description_1");
-        Epic expectedEpic = new Epic(0,"epic_1", "epic_1");
+        Epic expectedEpic = new Epic(0,"epic_1", "epic_description_1");
 
         // do
         Epic actualEpic = taskManager.addNewTask(epic);
