@@ -9,7 +9,7 @@ public class Task {
     protected int id;
     protected TaskStatus status;
 
-    protected TaskType type = TaskType.TASK;
+    protected final TaskType type = TaskType.TASK;
 
     public Task(int id) {
         this.id = id;

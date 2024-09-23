@@ -6,7 +6,7 @@ public class Subtask extends Task {
 
     private Integer epicId;
 
-    protected TaskType type = TaskType.SUBTASK;
+    protected final TaskType type = TaskType.SUBTASK;
 
     public Subtask(int id, String name, String description, Integer epicId, TaskStatus status) {
         super(id, name, description, status);
@@ -38,6 +38,10 @@ public class Subtask extends Task {
 
     public Integer getEpicId() {
         return epicId;
+    }
+
+    public TaskType getType() {
+        return type;
     }
 
     public void setEpicId(Epic epic) {
