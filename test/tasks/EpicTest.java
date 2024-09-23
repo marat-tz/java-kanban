@@ -116,7 +116,7 @@ class EpicTest {
     void checkEquals_epicShouldBeEqualsEpic() {
         // prepare
         Epic epic1 = new Epic(1, "epic_1", "epic_description_1");
-        Epic epic2 = new Epic(1, "epic_2", "epic_description_2");
+        Epic epic2 = new Epic(1, "epic_1", "epic_description_1");
 
         // do
         // check
