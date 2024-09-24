@@ -67,9 +67,6 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         TaskStatus status;
 
         switch (temp[3]) {
-            case "NEW":
-                status = TaskStatus.NEW;
-                break;
             case "IN_PROGRESS":
                 status = TaskStatus.IN_PROGRESS;
                 break;
