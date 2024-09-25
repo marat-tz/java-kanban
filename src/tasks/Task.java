@@ -9,6 +9,8 @@ public class Task {
     protected int id;
     protected TaskStatus status;
 
+    protected final TaskType type = TaskType.TASK;
+
     public Task(int id) {
         this.id = id;
     }
@@ -50,6 +52,10 @@ public class Task {
         return id;
     }
 
+    public TaskType getType() {
+        return type;
+    }
+
     public void setId(Integer id) {
         if (Objects.nonNull(id) && id >= 0) {
             this.id = id;
@@ -75,7 +81,7 @@ public class Task {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Task task = (Task) o;
-        return id == task.id;
+        return id == task.id && name.equals(task.name) && description.equals(task.description);
     }
 
     @Override
@@ -85,12 +91,7 @@ public class Task {
 
     @Override
     public String toString() {
-        return "tasks.Task{" +
-                "name='" + name + '\'' +
-                ", description='" + description + '\'' +
-                ", id=" + id +
-                ", status=" + status +
-                '}';
+        return String.format("%s,%s,%s,%s,%s", id, type, name, status, description);
     }
 
 }

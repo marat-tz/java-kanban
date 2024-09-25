@@ -5,6 +5,8 @@ import java.util.*;
 public class Epic extends Task {
     private List<Integer> epicSubtasks = new ArrayList<>();
 
+    protected final TaskType type = TaskType.EPIC;
+
     public Epic(String name, String description) {
         super(name, description, TaskStatus.NEW);
     }
@@ -29,6 +31,10 @@ public class Epic extends Task {
         epicSubtasks.remove(id);
     }
 
+    public TaskType getType() {
+        return type;
+    }
+
     public void addSubtask(Subtask subtask) {
         if (Objects.nonNull(subtask)) {
             epicSubtasks.add(subtask.getId());
@@ -51,13 +57,7 @@ public class Epic extends Task {
 
     @Override
     public String toString() {
-        return "tasks.Epic{" +
-                "name='" + name + '\'' +
-                ", description='" + description + '\'' +
-                ", id=" + id +
-                ", status=" + status +
-                ", subtasks=" + epicSubtasks +
-                '}';
+        return String.format("%s,%s,%s,%s,%s", id, type, name, status, description);
     }
 
 }

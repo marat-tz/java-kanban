@@ -45,7 +45,7 @@ class SubtaskTest {
     void checkEquals_subtaskShouldBeEqualsSubtask() {
         // prepare
         Subtask subtask1 = new Subtask(1, "subtask_1", "subtask_description_1");
-        Subtask subtask2 = new Subtask(1, "subtask_2", "subtask_description_2");
+        Subtask subtask2 = new Subtask(1, "subtask_1", "subtask_description_1");
 
         // do
         // check
