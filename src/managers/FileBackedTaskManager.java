@@ -13,6 +13,8 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -39,7 +41,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         try (Writer fileWriter = new FileWriter(file)) {
 
             if (!getAllTasks().isEmpty() || !getAllSubtasks().isEmpty() || !getAllEpic().isEmpty()) {
-                fileWriter.write("ID,TYPE,NAME,STATUS,DESCRIPTION,EPIC\n");
+                fileWriter.write("ID,TYPE,NAME,STATUS,DESCRIPTION,EPIC,DURATION,START_TIME,END_TIME\n");
 
                 for (Task task : getAllTasks()) {
                     fileWriter.write(task.toString() + "\n");
@@ -65,6 +67,9 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         String name = temp[2];
         String description = temp[4];
         TaskStatus status;
+        Duration duration = Duration.parse(temp[6]);
+        LocalDateTime startTime = LocalDateTime.parse(temp[7]);
+        LocalDateTime endTime;
 
         switch (temp[3]) {
             case "IN_PROGRESS":
@@ -79,12 +84,13 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
         switch (temp[1]) {
             case "TASK":
-                return new Task(id, name, description, status);
+                return new Task(id, name, description, status, duration, startTime);
             case "SUBTASK":
                 int epicId = Integer.parseInt(temp[5]);
-                return new Subtask(id, name, description, epicId, status);
+                return new Subtask(id, name, description, status, duration, startTime, epicId);
             case "EPIC":
-                return new Epic(id, name, description, status);
+                endTime = LocalDateTime.parse(temp[8]);
+                return new Epic(id, name, description, status, duration, startTime, endTime);
             default:
                 return null;
         }
