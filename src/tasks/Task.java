@@ -43,6 +43,15 @@ public class Task {
         this.id = id;
     }
 
+    public Task(int id, String name, String description, TaskStatus status, Duration duration, LocalDateTime startTime) {
+        this.name = name;
+        this.description = description;
+        this.id = id;
+        this.status = status;
+        this.duration = duration;
+        this.startTime = startTime;
+    }
+
     public LocalDateTime getEndTime() {
         return null;
     }
