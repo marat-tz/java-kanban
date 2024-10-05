@@ -1,5 +1,7 @@
 package tasks;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class Subtask extends Task {
@@ -30,6 +32,10 @@ public class Subtask extends Task {
 
     public Subtask(int id, String name, String description, TaskStatus status) {
         super(id, name, description, status);
+    }
+
+    public Subtask(int id, String name, String description, TaskStatus status, Duration duration, LocalDateTime startTime) {
+        super(id, name, description, status, duration, startTime);
     }
 
     public Subtask(int id) {
