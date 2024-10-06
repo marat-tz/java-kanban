@@ -216,6 +216,7 @@ public class InMemoryTaskManager implements TaskManager {
 
             if (idTask.containsKey(taskId)) {
                 removedTask = idTask.remove(taskId);
+                sortedTasks.remove(removedTask);
                 historyManager.remove(taskId);
 
             } else if (idSubtask.containsKey(taskId)) {
@@ -223,10 +224,12 @@ public class InMemoryTaskManager implements TaskManager {
                 idEpic.get(subtask.getEpicId()).removeSubtask(taskId);
                 refreshEpicStatus(subtask.getEpicId());
                 removedTask = idSubtask.remove(taskId);
+                sortedTasks.remove(removedTask);
                 historyManager.remove(taskId);
 
             } else if (idEpic.containsKey(taskId)) {
                 removedTask = idEpic.remove(taskId);
+                sortedTasks.remove(removedTask);
                 historyManager.remove(taskId);
 
             } else {
@@ -252,6 +255,7 @@ public class InMemoryTaskManager implements TaskManager {
             for (int id : idTask.keySet()) {
                 historyManager.remove(id);
             }
+            sortedTasks.removeAll(idTask.values());
             idTask.clear();
         }
 
@@ -273,6 +277,7 @@ public class InMemoryTaskManager implements TaskManager {
             for (int id : idSubtask.keySet()) {
                 historyManager.remove(id);
             }
+            sortedTasks.removeAll(idSubtask.values());
             idSubtask.clear();
         }
 
@@ -294,6 +299,7 @@ public class InMemoryTaskManager implements TaskManager {
             for (int id : idEpic.keySet()) {
                 historyManager.remove(id);
             }
+            sortedTasks.removeAll(idEpic.values());
             idEpic.clear();
         }
 
@@ -402,6 +408,8 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void deleteEpicSubtasks(Integer epicId) {
         Epic epicInMap;
+        Task removedTask;
+
         if (!Objects.nonNull(idEpic.get(epicId))) {
             System.out.println("Map not contains epic ");
 
@@ -412,7 +420,8 @@ public class InMemoryTaskManager implements TaskManager {
                 for (Subtask subtask : getEpicSubtasks(epicId)) {
                     // TODO: Оптимизировать удаление сабтасков
                     historyManager.remove(subtask.getId());
-                    idSubtask.remove(subtask.getId());
+                    removedTask = idSubtask.remove(subtask.getId());
+                    sortedTasks.remove(removedTask);
                 }
 
                 epicInMap.clearSubtasks();
