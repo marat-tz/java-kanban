@@ -41,14 +41,14 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         try (Writer fileWriter = new FileWriter(file)) {
 
             if (!getAllTasks().isEmpty() || !getAllSubtasks().isEmpty() || !getAllEpic().isEmpty()) {
-                fileWriter.write("ID,TYPE,NAME,STATUS,DESCRIPTION,EPIC,DURATION,START_TIME,END_TIME\n");
+                fileWriter.write("ID,TYPE,NAME,STATUS,DESCRIPTION,DURATION,START_TIME,EPIC\n");
 
                 for (Task task : getAllTasks()) {
-                    fileWriter.write(task.toString() + "\n");
+                    fileWriter.write(task.toString() + ",," + "\n");
                 }
 
                 for (Task epic : getAllEpic()) {
-                    fileWriter.write(epic.toString() + "\n");
+                    fileWriter.write(epic.toString() + ",," + "\n");
                 }
 
                 for (Task subtask : getAllSubtasks()) {
