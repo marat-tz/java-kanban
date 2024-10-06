@@ -56,6 +56,14 @@ public class Task {
         return null;
     }
 
+    public Duration getDuration() {
+        return duration;
+    }
+
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
     public String getName() {
         return name;
     }
