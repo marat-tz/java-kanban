@@ -314,9 +314,7 @@ public class InMemoryTaskManager implements TaskManager {
     // Такая задача не влияет на приоритет других, а при попадании в список может сломать логику работы компаратора.
     @Override
     public List<Task> getPrioritizedTasks() {
-
-
-        return null;
+        return sortedTasks.stream().toList();
     }
 
     protected void addTaskInSet(Task task) {
