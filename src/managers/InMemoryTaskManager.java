@@ -10,11 +10,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
+import java.util.TreeSet;
 
 public class InMemoryTaskManager implements TaskManager {
     protected Map<Integer, Task> idTask = new HashMap<>();
     protected Map<Integer, Subtask> idSubtask = new HashMap<>();
     protected Map<Integer, Epic> idEpic = new HashMap<>();
+    protected Set<Task> sortedTasks = new TreeSet<>();
     protected final HistoryManager historyManager;
 
     public InMemoryTaskManager() {
@@ -43,6 +46,7 @@ public class InMemoryTaskManager implements TaskManager {
             // для потомков созданы отдельные методы, с целью уменьшить вероятность ошибок
             if (newTask.getClass() == Task.class) {
                 idTask.put(newTask.getId(), newTask);
+                addTaskInSet(newTask);
                 System.out.println("Added task: " + newTask);
                 return newTask;
 
@@ -65,6 +69,7 @@ public class InMemoryTaskManager implements TaskManager {
             newId = generateNewId();
             newEpic.setId(newId);
             idEpic.put(newEpic.getId(), newEpic);
+            addTaskInSet(newEpic);
             System.out.println("Added epic: " + newEpic);
             return newEpic;
 
@@ -92,6 +97,7 @@ public class InMemoryTaskManager implements TaskManager {
                 }
                 idSubtask.put(newSubtask.getId(), newSubtask);
                 refreshEpicStatus(newSubtask.getEpicId());
+                addTaskInSet(newSubtask);
                 System.out.println("Added subtask: " + newSubtask);
                 return newSubtask;
             } else {
@@ -117,6 +123,7 @@ public class InMemoryTaskManager implements TaskManager {
                     updatedTask.setStatus(idTask.get(taskId).getStatus());
                 }
                 idTask.put(taskId, updatedTask);
+                addTaskInSet(updatedTask);
                 System.out.println("Updated task: " + updatedTask);
                 return updatedTask;
 
@@ -172,6 +179,7 @@ public class InMemoryTaskManager implements TaskManager {
             return null;
         }
 
+        addTaskInSet(subtaskUpdate);
         return subtaskUpdate;
     }
 
@@ -185,6 +193,7 @@ public class InMemoryTaskManager implements TaskManager {
             if (idEpic.containsKey(epicId)) {
                 epicUpdate.replaceSubtasks(idEpic.get(epicId).getEpicSubtasksId());
                 idEpic.put(epicId, epicUpdate);
+                addTaskInSet(epicUpdate);
                 System.out.println("Updated epic: " + epicUpdate);
                 return epicUpdate;
 
@@ -289,6 +298,27 @@ public class InMemoryTaskManager implements TaskManager {
         }
 
         System.out.println("Removed " + tasksSum + " epics");
+    }
+
+    //Если сортировать список заново каждый раз, сложность получения будет O(n∗log(n)).
+    // Можно хранить все задачи заранее отсортированными с помощью класса TreeSet.
+
+    // Дата начала задачи по каким-то причинам может быть не задана. Тогда при добавлении
+    // её не следует учитывать в списке задач и подзадач, отсортированных по времени начала.
+    // Такая задача не влияет на приоритет других, а при попадании в список может сломать логику работы компаратора.
+    @Override
+    public List<Task> getPrioritizedTasks() {
+
+
+        return null;
+    }
+
+    protected void addTaskInSet(Task task) {
+        if (Objects.nonNull(task) && !sortedTasks.contains(task)) {
+            sortedTasks.add(task);
+        } else {
+            System.out.println("Task is null or already contained");
+        }
     }
 
     @Override
