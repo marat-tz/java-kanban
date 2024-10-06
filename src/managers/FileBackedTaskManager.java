@@ -67,9 +67,8 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         String name = temp[2];
         String description = temp[4];
         TaskStatus status;
-        Duration duration = Duration.parse(temp[6]);
-        LocalDateTime startTime = LocalDateTime.parse(temp[7]);
-        LocalDateTime endTime;
+        Duration duration = Duration.parse(temp[5]);
+        LocalDateTime startTime = LocalDateTime.parse(temp[6]);
 
         switch (temp[3]) {
             case "IN_PROGRESS":
@@ -86,11 +85,10 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             case "TASK":
                 return new Task(id, name, description, status, duration, startTime);
             case "SUBTASK":
-                int epicId = Integer.parseInt(temp[5]);
+                int epicId = Integer.parseInt(temp[7]);
                 return new Subtask(id, name, description, status, duration, startTime, epicId);
             case "EPIC":
-                endTime = LocalDateTime.parse(temp[8]);
-                return new Epic(id, name, description, status, duration, startTime, endTime);
+                return new Epic(id, name, description, status, duration, startTime);
             default:
                 return null;
         }
