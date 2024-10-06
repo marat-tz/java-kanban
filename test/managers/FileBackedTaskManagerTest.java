@@ -6,10 +6,13 @@ import org.junit.jupiter.api.Test;
 import tasks.Epic;
 import tasks.Subtask;
 import tasks.Task;
+import tasks.TaskStatus;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.time.Duration;
+import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -106,14 +109,17 @@ public class FileBackedTaskManagerTest {
     @Test
     void save_shouldLoadTasks() {
         // prepare
-        Task task = new Task("Task 1", "Task Description");
-        Epic epic = new Epic("Epic 1", "Epic Description");
+        Duration duration = Duration.ofMinutes(60);
+        LocalDateTime time = LocalDateTime.now();
+        Task task = new Task(0, "Task 1", "Task Description", TaskStatus.NEW, duration, time);
+        Epic epic = new Epic(1, "Epic 1", "Epic Description", TaskStatus.NEW, duration, time);
 
         // do
         Task actualTask = taskManager.addNewTask(task);
         Epic actualEpic = taskManager.addNewTask(epic);
 
-        Subtask subtask = new Subtask("Subtask 1", "Subtask Description", epic.getId());
+        Subtask subtask = new Subtask(2, "Subtask 1", "Subtask Description",
+                TaskStatus.NEW, duration, time, epic.getId());
         Subtask actualSub = taskManager.addNewTask(subtask);
 
         // check
