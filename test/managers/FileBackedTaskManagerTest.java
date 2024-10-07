@@ -20,6 +20,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class FileBackedTaskManagerTest {
 
     private FileBackedTaskManager taskManager;
+    private Duration duration;
+    private LocalDateTime time;
 
     private File file;
 
@@ -32,6 +34,8 @@ public class FileBackedTaskManagerTest {
             ex.printStackTrace();
         }
         taskManager = Managers.getFileBackedTaskManager(file);
+        duration = Duration.ofMinutes(60);
+        time = LocalDateTime.now();
     }
 
     @Test
@@ -74,8 +78,6 @@ public class FileBackedTaskManagerTest {
     @Test
     void save_shouldSaveFewTasksInFile() {
         // prepare
-        Duration duration = Duration.ofMinutes(60);
-        LocalDateTime time = LocalDateTime.now();
         Task task = new Task(0, "Task 1", "Task Description", TaskStatus.NEW, duration, time);
         Epic epic = new Epic(1, "Epic 1", "Epic Description", TaskStatus.NEW, duration, time);
 
@@ -112,8 +114,6 @@ public class FileBackedTaskManagerTest {
     @Test
     void save_shouldLoadTasks() {
         // prepare
-        Duration duration = Duration.ofMinutes(60);
-        LocalDateTime time = LocalDateTime.now();
         Task task = new Task(0, "Task 1", "Task Description", TaskStatus.NEW, duration, time);
         Epic epic = new Epic(1, "Epic 1", "Epic Description", TaskStatus.NEW, duration, time);
 
