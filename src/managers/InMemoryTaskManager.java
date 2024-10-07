@@ -35,7 +35,7 @@ public class InMemoryTaskManager implements TaskManager {
         return historyManager;
     }
 
-    private boolean checkIntersection(Task task1, Task task2) {
+    protected boolean checkIntersection(Task task1, Task task2) {
         LocalDateTime startTime1 = task1.getStartTime();
         LocalDateTime endTime1 = task1.getEndTime();
         LocalDateTime startTime2 = task2.getStartTime();
@@ -52,7 +52,7 @@ public class InMemoryTaskManager implements TaskManager {
         }
     }
 
-    private boolean isTaskStartTimeMatch(Task newTask) {
+    protected boolean isTaskStartTimeMatch(Task newTask) {
         return getPrioritizedTasks().stream().anyMatch(task -> checkIntersection(newTask, task));
     }
     @Override
