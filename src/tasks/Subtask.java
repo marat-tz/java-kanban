@@ -41,6 +41,30 @@ public class Subtask extends Task {
         this.epicId = epicId;
     }
 
+    public Subtask(int id, String name, String description,
+                   TaskStatus status, Duration duration,
+                   LocalDateTime startTime) {
+        super(id, name, description, status, duration, startTime);
+    }
+
+    public Subtask(String name, String description,
+                   TaskStatus status, Duration duration,
+                   LocalDateTime startTime, Integer epicId) {
+        super(name, description, status, duration, startTime);
+        this.epicId = epicId;
+    }
+
+    public Subtask(String name, String description,
+                   Duration duration, LocalDateTime startTime, Integer epicId) {
+        super(name, description, duration, startTime);
+        this.epicId = epicId;
+    }
+
+    public Subtask(int id, String name, String description,
+                   Duration duration, LocalDateTime startTime) {
+        super(id, name, description, duration, startTime);
+    }
+
     public Subtask(int id) {
         super(id);
     }

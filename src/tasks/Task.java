@@ -9,7 +9,7 @@ public class Task implements Comparable<Task> {
     protected String name;
     protected String description;
     protected int id;
-    protected TaskStatus status;
+    protected TaskStatus status = TaskStatus.NEW;
     protected Duration duration;
     protected LocalDateTime startTime;
     protected final TaskType type = TaskType.TASK;
@@ -48,6 +48,29 @@ public class Task implements Comparable<Task> {
         this.description = description;
         this.id = id;
         this.status = status;
+        this.duration = duration;
+        this.startTime = startTime;
+    }
+
+    public Task(int id, String name, String description, Duration duration, LocalDateTime startTime) {
+        this.name = name;
+        this.description = description;
+        this.id = id;
+        this.duration = duration;
+        this.startTime = startTime;
+    }
+
+    public Task(String name, String description, TaskStatus status, Duration duration, LocalDateTime startTime) {
+        this.name = name;
+        this.description = description;
+        this.status = status;
+        this.duration = duration;
+        this.startTime = startTime;
+    }
+
+    public Task(String name, String description, Duration duration, LocalDateTime startTime) {
+        this.name = name;
+        this.description = description;
         this.duration = duration;
         this.startTime = startTime;
     }
