@@ -306,9 +306,6 @@ public class InMemoryTaskManager implements TaskManager {
         System.out.println("Removed " + tasksSum + " epics");
     }
 
-    //Если сортировать список заново каждый раз, сложность получения будет O(n∗log(n)).
-    // Можно хранить все задачи заранее отсортированными с помощью класса TreeSet.
-
     // Дата начала задачи по каким-то причинам может быть не задана. Тогда при добавлении
     // её не следует учитывать в списке задач и подзадач, отсортированных по времени начала.
     // Такая задача не влияет на приоритет других, а при попадании в список может сломать логику работы компаратора.
@@ -318,7 +315,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     protected void addTaskInSet(Task task) {
-        if (Objects.nonNull(task) && !sortedTasks.contains(task)) {
+        if (Objects.nonNull(task) && Objects.nonNull(task.getStartTime()) && !sortedTasks.contains(task)) {
             sortedTasks.add(task);
         } else {
             System.out.println("Task is null or already contained");
