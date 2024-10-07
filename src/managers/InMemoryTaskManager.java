@@ -5,6 +5,7 @@ import tasks.Subtask;
 import tasks.Task;
 import tasks.TaskStatus;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -504,5 +505,19 @@ public class InMemoryTaskManager implements TaskManager {
                 idEpic.get(epicId).setStatus(TaskStatus.IN_PROGRESS);
             }
         }
+    }
+
+    protected void refreshEpicTime(Subtask subtask) {
+        Epic epic = idEpic.get(subtask.getEpicId());
+
+        if (Objects.isNull(epic.getStartTime()) || epic.getStartTime().isAfter(subtask.getStartTime())) {
+            epic.setStartTime(subtask.getStartTime());
+        }
+
+        if (Objects.isNull(epic.getEndTime()) || epic.getEndTime().isBefore(subtask.getEndTime())) {
+            epic.setEndTime(subtask.getEndTime());
+        }
+
+        epic.setDuration(Duration.between(epic.getStartTime(), epic.getEndTime()));
     }
 }
