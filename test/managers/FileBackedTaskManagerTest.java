@@ -20,8 +20,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class FileBackedTaskManagerTest {
 
     private FileBackedTaskManager taskManager;
-    private Duration duration;
-    private LocalDateTime time;
+    private Duration duration1;
+    private Duration duration2;
+    private Duration duration3;
+    private LocalDateTime time1;
+    private LocalDateTime time2;
+    private LocalDateTime time3;
 
     private File file;
 
@@ -34,8 +38,12 @@ public class FileBackedTaskManagerTest {
             ex.printStackTrace();
         }
         taskManager = Managers.getFileBackedTaskManager(file);
-        duration = Duration.ofMinutes(60);
-        time = LocalDateTime.now();
+        duration1 = Duration.ofMinutes(10);
+        duration2 = Duration.ofMinutes(10);
+        duration3 = Duration.ofMinutes(10);
+        time1 = LocalDateTime.of(2024, 10, 10, 10, 10);
+        time2 = LocalDateTime.of(2024, 10, 10, 11, 10);
+        time3 = LocalDateTime.of(2024, 10, 10, 12, 10);
     }
 
     @Test
@@ -78,15 +86,15 @@ public class FileBackedTaskManagerTest {
     @Test
     void save_shouldSaveFewTasksInFile() {
         // prepare
-        Task task = new Task(0, "Task 1", "Task Description", TaskStatus.NEW, duration, time);
-        Epic epic = new Epic(1, "Epic 1", "Epic Description", TaskStatus.NEW, duration, time);
+        Task task = new Task(0, "Task 1", "Task Description", TaskStatus.NEW, duration1, time1);
+        Epic epic = new Epic(1, "Epic 1", "Epic Description", TaskStatus.NEW, duration2, time2);
 
         // do
         Task actualTask = taskManager.addNewTask(task);
         Epic actualEpic = taskManager.addNewTask(epic);
 
         Subtask subtask = new Subtask(2, "Subtask 1", "Subtask Description",
-                TaskStatus.NEW, duration, time, epic.getId());
+                TaskStatus.NEW, duration3, time3, epic.getId());
         Subtask actualSub = taskManager.addNewTask(subtask);
 
         // check
@@ -114,15 +122,15 @@ public class FileBackedTaskManagerTest {
     @Test
     void save_shouldLoadTasks() {
         // prepare
-        Task task = new Task(0, "Task 1", "Task Description", TaskStatus.NEW, duration, time);
-        Epic epic = new Epic(1, "Epic 1", "Epic Description", TaskStatus.NEW, duration, time);
+        Task task = new Task(0, "Task 1", "Task Description", TaskStatus.NEW, duration1, time1);
+        Epic epic = new Epic(1, "Epic 1", "Epic Description", TaskStatus.NEW, duration2, time2);
 
         // do
         Task actualTask = taskManager.addNewTask(task);
         Epic actualEpic = taskManager.addNewTask(epic);
 
         Subtask subtask = new Subtask(2, "Subtask 1", "Subtask Description",
-                TaskStatus.NEW, duration, time, epic.getId());
+                TaskStatus.NEW, duration3, time3, epic.getId());
         Subtask actualSub = taskManager.addNewTask(subtask);
 
         // check

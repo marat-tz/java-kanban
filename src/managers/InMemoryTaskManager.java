@@ -42,6 +42,10 @@ public class InMemoryTaskManager implements TaskManager {
         LocalDateTime startTime2 = task2.getStartTime();
         LocalDateTime endTime2 = task2.getEndTime();
 
+        if (task1.getId() == task2.getId()) {
+            return false;
+        }
+
         if (startTime1.isBefore(startTime2) && endTime1.isBefore(startTime2)
                 || startTime2.isBefore(startTime1) && endTime2.isBefore(startTime1)) {
             return false;
@@ -56,6 +60,7 @@ public class InMemoryTaskManager implements TaskManager {
     protected boolean isTaskStartTimeMatch(Task newTask) {
         return getPrioritizedTasks().stream().anyMatch(task -> checkIntersection(newTask, task));
     }
+
     @Override
     public Task addNewTask(Task newTask) {
         int newId;
@@ -470,7 +475,8 @@ public class InMemoryTaskManager implements TaskManager {
                 for (Subtask subtask : getEpicSubtasks(epicId)) {
                     historyManager.remove(subtask.getId());
                     removedTask = idSubtask.remove(subtask.getId());
-                    refreshEpicTimeRemoveSubtask((Subtask) removedTask);
+                    epicInMap.setStartTime(null);
+                    epicInMap.setEndTime(null);
                     sortedTasks.remove(removedTask);
                 }
 

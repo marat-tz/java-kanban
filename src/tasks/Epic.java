@@ -53,10 +53,6 @@ public class Epic extends Task {
         this.endTime = time;
     }
 
-    public LocalDateTime getEndTime() {
-        return this.endTime;
-    }
-
     public ArrayList<Integer> getEpicSubtasksId() {
         return new ArrayList<>(epicSubtasks);
     }
@@ -93,8 +89,11 @@ public class Epic extends Task {
     public String toString() {
         if (Objects.isNull(duration)) {
             return String.format("%s,%s,%s,%s,%s,%s,%s", id, type, name, status, description, null, startTime);
-        } else {
+        } else if (Objects.isNull(duration) && Objects.isNull(startTime)){
             return String.format("%s,%s,%s,%s,%s,%s,%s", id, type, name, status, description, null, null);
+        } else {
+            return String.format("%s,%s,%s,%s,%s,%s,%s", id, type, name, status, description,
+                    duration.toMinutes(), startTime);
         }
     }
 
