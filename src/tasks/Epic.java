@@ -54,7 +54,7 @@ public class Epic extends Task {
     }
 
     public LocalDateTime getEndTime() {
-        return null;
+        return this.endTime;
     }
 
     public ArrayList<Integer> getEpicSubtasksId() {
