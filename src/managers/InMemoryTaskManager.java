@@ -364,9 +364,6 @@ public class InMemoryTaskManager implements TaskManager {
         System.out.println("Removed " + tasksSum + " epics");
     }
 
-    // Дата начала задачи по каким-то причинам может быть не задана. Тогда при добавлении
-    // её не следует учитывать в списке задач и подзадач, отсортированных по времени начала.
-    // Такая задача не влияет на приоритет других, а при попадании в список может сломать логику работы компаратора.
     @Override
     public List<Task> getPrioritizedTasks() {
         return sortedTasks.stream().toList();
@@ -471,7 +468,6 @@ public class InMemoryTaskManager implements TaskManager {
             if (!getEpicSubtasks(epicId).isEmpty()) {
 
                 for (Subtask subtask : getEpicSubtasks(epicId)) {
-                    // TODO: Оптимизировать удаление сабтасков
                     historyManager.remove(subtask.getId());
                     removedTask = idSubtask.remove(subtask.getId());
                     refreshEpicTimeRemoveSubtask((Subtask) removedTask);
