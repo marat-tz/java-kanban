@@ -134,6 +134,7 @@ public class InMemoryTaskManager implements TaskManager {
                 }
                 idSubtask.put(newSubtask.getId(), newSubtask);
                 refreshEpicStatus(newSubtask.getEpicId());
+                refreshEpicTime(newSubtask);
                 addTaskInSet(newSubtask);
                 System.out.println("Added subtask: " + newSubtask);
                 return newSubtask;
@@ -203,6 +204,7 @@ public class InMemoryTaskManager implements TaskManager {
                     subtaskUpdate.setEpicId(idEpic.get(subtaskMap.getEpicId()));
                     idSubtask.put(subtaskId, subtaskUpdate);
                     refreshEpicStatus(subtaskUpdate.getEpicId());
+                    refreshEpicTime(subtaskUpdate);
                     System.out.print("Updated subtask: " + subtaskUpdate);
 
                     // если указан другой epic-id, то нужно удалить сабтаск у старого epic
@@ -275,8 +277,10 @@ public class InMemoryTaskManager implements TaskManager {
                 Subtask subtask = idSubtask.get(taskId);
                 idEpic.get(subtask.getEpicId()).removeSubtask(taskId);
                 refreshEpicStatus(subtask.getEpicId());
+                refreshEpicTime(subtask);
                 removedTask = idSubtask.remove(taskId);
                 sortedTasks.remove(removedTask);
+                refreshEpicTimeRemoveSubtask((Subtask) removedTask);
                 historyManager.remove(taskId);
 
             } else if (idEpic.containsKey(taskId)) {
@@ -323,6 +327,8 @@ public class InMemoryTaskManager implements TaskManager {
             for (Subtask subtask : idSubtask.values()) {
                 epic = idEpic.get(subtask.getEpicId());
                 epic.clearSubtasks();
+                epic.setStartTime(null);
+                epic.setEndTime(null);
                 refreshEpicStatus(epic.getId());
             }
             tasksSum = idSubtask.size();
@@ -468,6 +474,7 @@ public class InMemoryTaskManager implements TaskManager {
                     // TODO: Оптимизировать удаление сабтасков
                     historyManager.remove(subtask.getId());
                     removedTask = idSubtask.remove(subtask.getId());
+                    refreshEpicTimeRemoveSubtask((Subtask) removedTask);
                     sortedTasks.remove(removedTask);
                 }
 
@@ -519,5 +526,16 @@ public class InMemoryTaskManager implements TaskManager {
         }
 
         epic.setDuration(Duration.between(epic.getStartTime(), epic.getEndTime()));
+    }
+
+    protected void refreshEpicTimeRemoveSubtask(Subtask subtask) {
+        Epic epic = idEpic.get(subtask.getEpicId());
+        epic.setStartTime(null);
+        epic.setEndTime(null);
+        List<Integer> epicSubtasksId = epic.getEpicSubtasksId();
+        for (Integer id : epicSubtasksId) {
+            Subtask tempSubtask = idSubtask.get(id);
+            refreshEpicTime(tempSubtask);
+        }
     }
 }
