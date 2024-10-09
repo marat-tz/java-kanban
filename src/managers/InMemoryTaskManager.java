@@ -42,18 +42,63 @@ public class InMemoryTaskManager implements TaskManager {
         LocalDateTime startTime2 = task2.getStartTime();
         LocalDateTime endTime2 = task2.getEndTime();
 
-        if (task1.getId() == task2.getId()) {
+        Subtask tempSubtask;
+        Epic tempEpic;
+
+        if (Objects.equals(task1.getId(), task2.getId())) {
             return false;
+        }
+
+        if (task1 instanceof Subtask && task2 instanceof Epic) {
+            tempSubtask = (Subtask) task1;
+            tempEpic = (Epic) task2;
+            if (tempSubtask.getEpicId().equals(tempEpic.getId())) {
+                return false;
+            }
+        } else if (task2 instanceof Subtask && task1 instanceof Epic) {
+            tempSubtask = (Subtask) task2;
+            tempEpic = (Epic) task1;
+            if (tempSubtask.getEpicId().equals(tempEpic.getId())) {
+                return false;
+            }
+        }
+
+        // если у эпиков изначально нет времени окончания, то проверяем пересечения по стартовому времени
+        if (endTime1 == null && endTime2 == null) {
+            return false;
+
+        } else if (endTime1 == null) {
+            return (startTime1.isAfter(startTime2) || startTime1.equals(startTime2))
+                    && (startTime1.isBefore(endTime2) || startTime1.equals(endTime2));
+
+        } else if (endTime2 == null) {
+            return (startTime2.isAfter(startTime1) || startTime2.equals(startTime1))
+                    && (startTime2.isBefore(endTime1) || startTime2.equals(endTime1));
         }
 
         if (startTime1.isBefore(startTime2) && endTime1.isBefore(startTime2)
                 || startTime2.isBefore(startTime1) && endTime2.isBefore(startTime1)) {
             return false;
+
         } else if (startTime1.isBefore(startTime2) && endTime1.isAfter(startTime2)
                 || startTime2.isBefore(startTime1) && endTime2.isAfter(startTime1)){
             return true;
+
         } else {
             return true;
+        }
+    }
+
+    @Override
+    public List<Task> getPrioritizedTasks() {
+        return sortedTasks.stream().toList();
+    }
+
+    protected void addTaskInSet(Task task) {
+        if (Objects.nonNull(task.getStartTime()) && !sortedTasks.contains(task)) {
+            sortedTasks.add(task);
+        } else {
+            System.out.println("Task is null or already contained");
         }
     }
 
@@ -65,14 +110,14 @@ public class InMemoryTaskManager implements TaskManager {
     public Task addNewTask(Task newTask) {
         int newId;
 
-        if (isTaskStartTimeMatch(newTask)) {
-            System.out.println("Task startTime is match with existent task");
-            return null;
-        }
-
         if (Objects.nonNull(newTask)) {
             newId = generateNewId();
             newTask.setId(newId);
+
+            if (isTaskStartTimeMatch(newTask)) {
+                System.out.println("Task startTime is match with existent task");
+                return null;
+            }
 
             // в данный метод должны попадать только типы Task
             // для потомков созданы отдельные методы, с целью уменьшить вероятность ошибок
@@ -97,14 +142,15 @@ public class InMemoryTaskManager implements TaskManager {
     public Epic addNewTask(Epic newEpic) {
         int newId;
 
-        if (isTaskStartTimeMatch(newEpic)) {
-            System.out.println("Epic startTime is match with existent epic");
-            return null;
-        }
-
         if (Objects.nonNull(newEpic)) {
             newId = generateNewId();
             newEpic.setId(newId);
+
+            if (isTaskStartTimeMatch(newEpic)) {
+                System.out.println("Epic startTime is match with existent epic");
+                return null;
+            }
+
             idEpic.put(newEpic.getId(), newEpic);
             addTaskInSet(newEpic);
             System.out.println("Added epic: " + newEpic);
@@ -120,15 +166,15 @@ public class InMemoryTaskManager implements TaskManager {
     public Subtask addNewTask(Subtask newSubtask) {
         int newId;
 
-        if (isTaskStartTimeMatch(newSubtask)) {
-            System.out.println("Subtask startTime is match with existent subtask");
-            return null;
-        }
-
         if (Objects.nonNull(newSubtask)) {
             Integer subtaskEpicId = newSubtask.getEpicId();
             newId = generateNewId();
             newSubtask.setId(newId);
+
+            if (isTaskStartTimeMatch(newSubtask)) {
+                System.out.println("Subtask startTime is match with existent subtask");
+                return null;
+            }
 
             if (subtaskEpicId != null && subtaskEpicId >= 0) {
                 if (idEpic.containsKey(newSubtask.getEpicId())) {
@@ -190,11 +236,6 @@ public class InMemoryTaskManager implements TaskManager {
     public Subtask updateTask(Subtask subtaskUpdate) {
         int subtaskId;
 
-        if (isTaskStartTimeMatch(subtaskUpdate)) {
-            System.out.println("Updated subtask startTime is match with existent subtask");
-            return null;
-        }
-
         if (Objects.nonNull(subtaskUpdate)) {
             subtaskId = subtaskUpdate.getId();
 
@@ -207,6 +248,12 @@ public class InMemoryTaskManager implements TaskManager {
 
                 if (subtaskUpdate.getEpicId() == null) {
                     subtaskUpdate.setEpicId(idEpic.get(subtaskMap.getEpicId()));
+
+                    if (isTaskStartTimeMatch(subtaskUpdate)) {
+                        System.out.println("Updated subtask time is match with existent task");
+                        return null;
+                    }
+
                     idSubtask.put(subtaskId, subtaskUpdate);
                     refreshEpicStatus(subtaskUpdate.getEpicId());
                     refreshEpicTime(subtaskUpdate);
@@ -216,6 +263,13 @@ public class InMemoryTaskManager implements TaskManager {
                 } else if (!subtaskUpdate.getEpicId().equals(idSubtask.get(subtaskId).getEpicId())) {
                     idEpic.get(idSubtask.get(subtaskId).getEpicId()).removeSubtask(subtaskId);
                     refreshEpicStatus(idSubtask.get(subtaskId).getEpicId());
+                    refreshEpicTimeRemoveSubtask(idSubtask.get(subtaskId));
+
+                    if (isTaskStartTimeMatch(subtaskUpdate)) {
+                        System.out.println("Updated subtask time is match with existent task");
+                        return null;
+                    }
+
                     idSubtask.put(subtaskId, subtaskUpdate);
                     idEpic.get(subtaskUpdate.getEpicId()).addSubtask(subtaskUpdate);
                     refreshEpicStatus(subtaskUpdate.getEpicId());
@@ -282,7 +336,6 @@ public class InMemoryTaskManager implements TaskManager {
                 Subtask subtask = idSubtask.get(taskId);
                 idEpic.get(subtask.getEpicId()).removeSubtask(taskId);
                 refreshEpicStatus(subtask.getEpicId());
-                refreshEpicTime(subtask);
                 removedTask = idSubtask.remove(taskId);
                 sortedTasks.remove(removedTask);
                 refreshEpicTimeRemoveSubtask((Subtask) removedTask);
@@ -367,19 +420,6 @@ public class InMemoryTaskManager implements TaskManager {
         }
 
         System.out.println("Removed " + tasksSum + " epics");
-    }
-
-    @Override
-    public List<Task> getPrioritizedTasks() {
-        return sortedTasks.stream().toList();
-    }
-
-    protected void addTaskInSet(Task task) {
-        if (Objects.nonNull(task) && Objects.nonNull(task.getStartTime()) && !sortedTasks.contains(task)) {
-            sortedTasks.add(task);
-        } else {
-            System.out.println("Task is null or already contained");
-        }
     }
 
     @Override

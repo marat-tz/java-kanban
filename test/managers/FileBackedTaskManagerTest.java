@@ -11,39 +11,26 @@ import tasks.TaskStatus;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.time.Duration;
-import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class FileBackedTaskManagerTest {
+public class FileBackedTaskManagerTest extends AbstractTaskManagerTest {
 
-    private FileBackedTaskManager taskManager;
-    private Duration duration1;
-    private Duration duration2;
-    private Duration duration3;
-    private LocalDateTime time1;
-    private LocalDateTime time2;
-    private LocalDateTime time3;
+    private FileBackedTaskManager fileBackedTaskManager;
 
     private File file;
 
     @BeforeEach
-    void init() {
+    void initFile() {
         file = null;
         try {
             file = java.io.File.createTempFile("backup", "csv");
         } catch (IOException ex) {
             ex.printStackTrace();
         }
-        taskManager = Managers.getFileBackedTaskManager(file);
-        duration1 = Duration.ofMinutes(10);
-        duration2 = Duration.ofMinutes(10);
-        duration3 = Duration.ofMinutes(10);
-        time1 = LocalDateTime.of(2024, 10, 10, 10, 10);
-        time2 = LocalDateTime.of(2024, 10, 10, 11, 10);
-        time3 = LocalDateTime.of(2024, 10, 10, 12, 10);
+        fileBackedTaskManager = Managers.getFileBackedTaskManager(file);
+        taskManager = fileBackedTaskManager;
     }
 
     @Test
@@ -52,7 +39,7 @@ public class FileBackedTaskManagerTest {
         Task task = null;
 
         // do
-        taskManager.addNewTask(task);
+        fileBackedTaskManager.addNewTask(task);
 
         // check
         try {
@@ -69,7 +56,7 @@ public class FileBackedTaskManagerTest {
         Task task = null;
 
         // do
-        taskManager.addNewTask(task);
+        fileBackedTaskManager.addNewTask(task);
         FileBackedTaskManager newManager = Managers.getFileBackedTaskManager(file);
         try {
             newManager.loadFromFile(file);
@@ -86,16 +73,16 @@ public class FileBackedTaskManagerTest {
     @Test
     void save_shouldSaveFewTasksInFile() {
         // prepare
-        Task task = new Task(0, "Task 1", "Task Description", TaskStatus.NEW, duration1, time1);
-        Epic epic = new Epic(1, "Epic 1", "Epic Description", TaskStatus.NEW, duration2, time2);
+        Task task = new Task(0, "Task 1", "Task Description", TaskStatus.NEW, duration, time1);
+        Epic epic = new Epic(1, "Epic 1", "Epic Description", TaskStatus.NEW, duration, time2);
 
         // do
-        Task actualTask = taskManager.addNewTask(task);
-        Epic actualEpic = taskManager.addNewTask(epic);
+        Task actualTask = fileBackedTaskManager.addNewTask(task);
+        Epic actualEpic = fileBackedTaskManager.addNewTask(epic);
 
         Subtask subtask = new Subtask(2, "Subtask 1", "Subtask Description",
-                TaskStatus.NEW, duration3, time3, epic.getId());
-        Subtask actualSub = taskManager.addNewTask(subtask);
+                TaskStatus.NEW, duration, time3, epic.getId());
+        Subtask actualSub = fileBackedTaskManager.addNewTask(subtask);
 
         // check
         boolean isTaskInFile = false;
@@ -122,22 +109,22 @@ public class FileBackedTaskManagerTest {
     @Test
     void save_shouldLoadTasks() {
         // prepare
-        Task task = new Task(0, "Task 1", "Task Description", TaskStatus.NEW, duration1, time1);
-        Epic epic = new Epic(1, "Epic 1", "Epic Description", TaskStatus.NEW, duration2, time2);
+        Task task = new Task(0, "Task 1", "Task Description", TaskStatus.NEW, duration, time1);
+        Epic epic = new Epic(1, "Epic 1", "Epic Description", TaskStatus.NEW, duration, time2);
 
         // do
-        Task actualTask = taskManager.addNewTask(task);
-        Epic actualEpic = taskManager.addNewTask(epic);
+        Task actualTask = fileBackedTaskManager.addNewTask(task);
+        Epic actualEpic = fileBackedTaskManager.addNewTask(epic);
 
         Subtask subtask = new Subtask(2, "Subtask 1", "Subtask Description",
-                TaskStatus.NEW, duration3, time3, epic.getId());
-        Subtask actualSub = taskManager.addNewTask(subtask);
+                TaskStatus.NEW, duration, time3, epic.getId());
+        Subtask actualSub = fileBackedTaskManager.addNewTask(subtask);
 
         // check
         FileBackedTaskManager manager = null;
 
         try {
-            manager = taskManager.loadFromFile(file);
+            manager = fileBackedTaskManager.loadFromFile(file);
         } catch (ManagerLoadException | NullPointerException ex) {
             ex.printStackTrace();
         }

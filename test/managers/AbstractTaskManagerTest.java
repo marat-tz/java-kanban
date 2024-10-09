@@ -16,23 +16,16 @@ import static org.junit.jupiter.api.Assertions.*;
 
 abstract class AbstractTaskManagerTest<T extends TaskManager> {
 
-    private TaskManager taskManager;
-    private Duration duration1;
-    private Duration duration2;
-    private Duration duration3;
-    private Duration duration4;
-    private LocalDateTime time1;
-    private LocalDateTime time2;
-    private LocalDateTime time3;
-    private LocalDateTime time4;
+    protected T taskManager;
+    protected Duration duration;
+    protected LocalDateTime time1;
+    protected LocalDateTime time2;
+    protected LocalDateTime time3;
+    protected LocalDateTime time4;
 
     @BeforeEach
     void init() {
-        taskManager = Managers.getDefault();
-        duration1 = Duration.ofMinutes(10);
-        duration2 = Duration.ofMinutes(10);
-        duration3 = Duration.ofMinutes(10);
-        duration4 = Duration.ofMinutes(10);
+        duration = Duration.ofMinutes(10);
         time1 = LocalDateTime.of(2024, 10, 10, 10, 10);
         time2 = LocalDateTime.of(2024, 10, 10, 11, 10);
         time3 = LocalDateTime.of(2024, 10, 10, 12, 10);
@@ -42,8 +35,8 @@ abstract class AbstractTaskManagerTest<T extends TaskManager> {
     @Test
     void addNewTask_shouldSaveTask() {
         // prepare
-        Task task = new Task("task_1", "description_1", duration1, time1);
-        Task expectedTask = new Task(0, "task_1", "description_1", TaskStatus.NEW, duration1, time1);
+        Task task = new Task("task_1", "description_1", duration, time1);
+        Task expectedTask = new Task(0, "task_1", "description_1", TaskStatus.NEW, duration, time1);
 
         // do
         Task actualTask = taskManager.addNewTask(task);
@@ -57,8 +50,8 @@ abstract class AbstractTaskManagerTest<T extends TaskManager> {
     @Test
     void addNewTask_shouldSaveEpic() {
         // prepare
-        Epic epic = new Epic("epic_1", "epic_description_1", duration1, time1);
-        Epic expectedEpic = new Epic(0, "epic_1", "epic_description_1", TaskStatus.NEW, duration1, time1);
+        Epic epic = new Epic("epic_1", "epic_description_1", duration, time1);
+        Epic expectedEpic = new Epic(0, "epic_1", "epic_description_1", TaskStatus.NEW, duration, time1);
 
         // do
         Epic actualEpic = taskManager.addNewTask(epic);
@@ -96,12 +89,12 @@ abstract class AbstractTaskManagerTest<T extends TaskManager> {
     @Test
     void addNewTask_shouldSaveSubtaskWithExistEpic() {
         // prepare
-        Epic epic = new Epic("Epic 1", "Epic Description", duration1, time1);
+        Epic epic = new Epic("Epic 1", "Epic Description", duration, time1);
         taskManager.addNewTask(epic);
         Subtask subtask = new Subtask(1, "subtask_1", "subtask_description_1",
-                TaskStatus.NEW, duration2, time2, 0);
+                TaskStatus.NEW, duration, time2, 0);
         Subtask expectedSubtask = new Subtask(1, "subtask_1", "subtask_description_1",
-                TaskStatus.NEW, duration2, time2, 0);
+                TaskStatus.NEW, duration, time2, 0);
 
         // do
         Subtask actualSubtask = taskManager.addNewTask(subtask);
@@ -129,13 +122,13 @@ abstract class AbstractTaskManagerTest<T extends TaskManager> {
     @Test
     void updateTask_shouldUpdateTaskWithSpecifiedId() {
         // prepare
-        Task task = new Task("task_1", "description_1", duration1, time1);
+        Task task = new Task("task_1", "description_1", duration, time1);
         Task savedTask = taskManager.addNewTask(task);
         Task updatedTask = new Task(savedTask.getId(), "task_1_updated", "description_1_updated",
-                TaskStatus.NEW, duration1, time1);
+                TaskStatus.NEW, duration, time1);
 
         Task expectedUpdatedTask = new Task(savedTask.getId(), "task_1_updated", "description_1_updated",
-                TaskStatus.NEW, duration1, time1);
+                TaskStatus.NEW, duration, time1);
 
         // do
         Task actualUpdatedTask = taskManager.updateTask(updatedTask);
@@ -147,13 +140,13 @@ abstract class AbstractTaskManagerTest<T extends TaskManager> {
     @Test
     void updateTask_shouldUpdateEpicWithSpecifiedId() {
         // prepare
-        Epic epic = new Epic("epic_1", "epic_description_1", duration1, time1);
+        Epic epic = new Epic("epic_1", "epic_description_1", duration, time1);
         Epic savedEpic = taskManager.addNewTask(epic);
         Epic updatedEpic = new Epic(savedEpic.getId(), "epic_1_updated", "epic_description_1_updated",
-                TaskStatus.NEW, duration1, time1);
+                TaskStatus.NEW, duration, time1);
 
         Epic expectedUpdatedEpic = new Epic(savedEpic.getId(), "epic_1_updated",
-                "epic_description_1_updated", TaskStatus.NEW, duration1, time1);
+                "epic_description_1_updated", TaskStatus.NEW, duration, time1);
 
         // do
         Epic actualUpdatedEpic = taskManager.updateTask(updatedEpic);
@@ -165,16 +158,16 @@ abstract class AbstractTaskManagerTest<T extends TaskManager> {
     @Test
     void updateTask_shouldUpdateSubtaskWithSpecifiedId() {
         // prepare
-        Epic epic = new Epic("epic_1", "epic_description_1", TaskStatus.NEW, duration1, time1);
+        Epic epic = new Epic("epic_1", "epic_description_1", TaskStatus.NEW, duration, time1);
         taskManager.addNewTask(epic);
         Subtask subtask = new Subtask("subtask_1", "subtask_description_1",
-                TaskStatus.NEW, duration2, time2, 0);
+                TaskStatus.NEW, duration, time2, 0);
         Subtask savedSubtask = taskManager.addNewTask(subtask);
         Subtask updatedSubtask = new Subtask(savedSubtask.getId() ,"subtask_1_updated",
-                "subtask_description_1_updated", TaskStatus.NEW, duration3, time3, 0);
+                "subtask_description_1_updated", TaskStatus.NEW, duration, time3, 0);
 
         Subtask expectedUpdatedSubtask = new Subtask(savedSubtask.getId(), "subtask_1_updated",
-                "subtask_description_1_updated", TaskStatus.NEW, duration3, time3, 0);
+                "subtask_description_1_updated", TaskStatus.NEW, duration, time3, 0);
 
         // do
         Subtask actualUpdatedSubtask = taskManager.updateTask(updatedSubtask);
@@ -186,13 +179,13 @@ abstract class AbstractTaskManagerTest<T extends TaskManager> {
     @Test
     void updateTask_shouldUpdateSubtaskEpicId() {
         // prepare
-        Epic epic1 = new Epic("epic_1", "epic_description_1", duration1, time1);
-        Epic epic2 = new Epic("epic_1", "epic_description_1", duration2, time2);
+        Epic epic1 = new Epic("epic_1", "epic_description_1", duration, time1);
+        Epic epic2 = new Epic("epic_1", "epic_description_1", duration, time2);
         taskManager.addNewTask(epic1);
         taskManager.addNewTask(epic2);
-        Subtask subtask = new Subtask("subtask_1", "subtask_description_1", duration3, time3, 0);
+        Subtask subtask = new Subtask("subtask_1", "subtask_description_1", duration, time3, 0);
         Subtask updateSubtask = new Subtask(2,"subtask_1", "subtask_description_1",
-                TaskStatus.NEW, duration3, time3,1);
+                TaskStatus.NEW, duration, time3,1);
         Subtask savedSubtask = taskManager.addNewTask(subtask);
 
         // do
@@ -207,11 +200,11 @@ abstract class AbstractTaskManagerTest<T extends TaskManager> {
     @Test
     void refreshEpicStatus_shouldUpdateEpicStatusToNew() {
         // prepare
-        Epic epic = new Epic("epic_1", "epic_description_1", TaskStatus.DONE, duration1, time1);
+        Epic epic = new Epic("epic_1", "epic_description_1", TaskStatus.DONE, duration, time1);
         taskManager.addNewTask(epic);
-        Subtask subtask1 = new Subtask("subtask_1", "subtask_description_1", duration2, time2, 0);
-        Subtask subtask2 = new Subtask("subtask_2", "subtask_description_2", duration3, time3, 0);
-        Subtask subtask3 = new Subtask("subtask_3", "subtask_description_3", duration4, time4, 0);
+        Subtask subtask1 = new Subtask("subtask_1", "subtask_description_1", duration, time2, 0);
+        Subtask subtask2 = new Subtask("subtask_2", "subtask_description_2", duration, time3, 0);
+        Subtask subtask3 = new Subtask("subtask_3", "subtask_description_3", duration, time4, 0);
         taskManager.addNewTask(subtask1);
         taskManager.addNewTask(subtask2);
         taskManager.addNewTask(subtask3);
@@ -224,11 +217,11 @@ abstract class AbstractTaskManagerTest<T extends TaskManager> {
     @Test
     void refreshEpicStatus_shouldUpdateEpicStatusToDone() {
         // prepare
-        Epic epic = new Epic("epic_1", "epic_description_1", duration1, time1);
+        Epic epic = new Epic("epic_1", "epic_description_1", duration, time1);
         taskManager.addNewTask(epic);
-        Subtask subtask1 = new Subtask("subtask_1", "subtask_description_1", duration2, time2, 0);
-        Subtask subtask2 = new Subtask("subtask_2", "subtask_description_2", duration3, time3, 0);
-        Subtask subtask3 = new Subtask("subtask_3", "subtask_description_3", duration4, time4, 0);
+        Subtask subtask1 = new Subtask("subtask_1", "subtask_description_1", duration, time2, 0);
+        Subtask subtask2 = new Subtask("subtask_2", "subtask_description_2", duration, time3, 0);
+        Subtask subtask3 = new Subtask("subtask_3", "subtask_description_3", duration, time4, 0);
         taskManager.addNewTask(subtask1);
         taskManager.addNewTask(subtask2);
         taskManager.addNewTask(subtask3);
@@ -237,22 +230,22 @@ abstract class AbstractTaskManagerTest<T extends TaskManager> {
         // check
         assertEquals(TaskStatus.NEW, epic.getStatus());
         taskManager.updateTask(new Subtask(1, "subtask_u_1", "subtask_description_u_1",
-                TaskStatus.DONE, duration2, time2));
+                TaskStatus.DONE, duration, time2));
         taskManager.updateTask(new Subtask(2, "subtask_u_2", "subtask_description_u_2",
-                TaskStatus.DONE, duration3, time3));
+                TaskStatus.DONE, duration, time3));
         taskManager.updateTask(new Subtask(3, "subtask_u_3", "subtask_description_u_3",
-                TaskStatus.DONE, duration4, time4));
+                TaskStatus.DONE, duration, time4));
         assertEquals(TaskStatus.DONE, epic.getStatus());
     }
 
     @Test
     void refreshEpicStatus_shouldUpdateEpicStatusToInProgress() {
         // prepare
-        Epic epic = new Epic("epic_1", "epic_description_1", duration1, time1);
+        Epic epic = new Epic("epic_1", "epic_description_1", duration, time1);
         taskManager.addNewTask(epic);
-        Subtask subtask1 = new Subtask("subtask_1", "subtask_description_1", duration2, time2, 0);
-        Subtask subtask2 = new Subtask("subtask_2", "subtask_description_2", duration3, time3, 0);
-        Subtask subtask3 = new Subtask("subtask_3", "subtask_description_3", duration4, time4, 0);
+        Subtask subtask1 = new Subtask("subtask_1", "subtask_description_1", duration, time2, 0);
+        Subtask subtask2 = new Subtask("subtask_2", "subtask_description_2", duration, time3, 0);
+        Subtask subtask3 = new Subtask("subtask_3", "subtask_description_3", duration, time4, 0);
         taskManager.addNewTask(subtask1);
         taskManager.addNewTask(subtask2);
         taskManager.addNewTask(subtask3);
@@ -261,22 +254,22 @@ abstract class AbstractTaskManagerTest<T extends TaskManager> {
         // check
         assertEquals(TaskStatus.NEW, epic.getStatus());
         taskManager.updateTask(new Subtask(1, "subtask_u_1", "subtask_description_u_1",
-                duration2, time2));
+                duration, time2));
         taskManager.updateTask(new Subtask(2, "subtask_u_2", "subtask_description_u_2",
-                TaskStatus.DONE, duration3, time3));
+                TaskStatus.DONE, duration, time3));
         taskManager.updateTask(new Subtask(3, "subtask_u_3", "subtask_description_u_3",
-                TaskStatus.DONE, duration4, time4));
+                TaskStatus.DONE, duration, time4));
         assertEquals(TaskStatus.IN_PROGRESS, epic.getStatus());
     }
 
     @Test
     void refreshEpicStatus_shouldUpdateEpicStatusSubtasksInProgress() {
         // prepare
-        Epic epic = new Epic("epic_1", "epic_description_1", duration1, time1);
+        Epic epic = new Epic("epic_1", "epic_description_1", duration, time1);
         taskManager.addNewTask(epic);
-        Subtask subtask1 = new Subtask("subtask_1", "subtask_description_1", duration2, time2, 0);
-        Subtask subtask2 = new Subtask("subtask_2", "subtask_description_2", duration3, time3, 0);
-        Subtask subtask3 = new Subtask("subtask_3", "subtask_description_3", duration4, time4, 0);
+        Subtask subtask1 = new Subtask("subtask_1", "subtask_description_1", duration, time2, 0);
+        Subtask subtask2 = new Subtask("subtask_2", "subtask_description_2", duration, time3, 0);
+        Subtask subtask3 = new Subtask("subtask_3", "subtask_description_3", duration, time4, 0);
         taskManager.addNewTask(subtask1);
         taskManager.addNewTask(subtask2);
         taskManager.addNewTask(subtask3);
@@ -285,18 +278,18 @@ abstract class AbstractTaskManagerTest<T extends TaskManager> {
         // check
         assertEquals(TaskStatus.NEW, epic.getStatus());
         taskManager.updateTask(new Subtask(1, "subtask_u_1", "subtask_description_u_1",
-                TaskStatus.IN_PROGRESS, duration2, time2));
+                TaskStatus.IN_PROGRESS, duration, time2));
         taskManager.updateTask(new Subtask(2, "subtask_u_2", "subtask_description_u_2",
-                TaskStatus.IN_PROGRESS, duration3, time3));
+                TaskStatus.IN_PROGRESS, duration, time3));
         taskManager.updateTask(new Subtask(3, "subtask_u_3", "subtask_description_u_3",
-                TaskStatus.IN_PROGRESS, duration4, time4));
+                TaskStatus.IN_PROGRESS, duration, time4));
         assertEquals(TaskStatus.IN_PROGRESS, epic.getStatus());
     }
 
     @Test
     void deleteTask_shouldDeleteTaskWithSpecifiedId() {
         // prepare
-        Task task = new Task("task_1", "description_1", duration1, time1);
+        Task task = new Task("task_1", "description_1", duration, time1);
         Task savedTask = taskManager.addNewTask(task);
 
         // do
@@ -309,7 +302,7 @@ abstract class AbstractTaskManagerTest<T extends TaskManager> {
     @Test
     void deleteTask_shouldDeleteEpicWithSpecifiedId() {
         // prepare
-        Epic epic = new Epic("epic_1", "epic_description_1", duration1, time1);
+        Epic epic = new Epic("epic_1", "epic_description_1", duration, time1);
         Epic savedEpic = taskManager.addNewTask(epic);
 
         // do
@@ -322,11 +315,11 @@ abstract class AbstractTaskManagerTest<T extends TaskManager> {
     @Test
     void deleteTask_shouldDeleteEpicSubtasks() {
         // prepare
-        Epic epic = new Epic("epic_1", "epic_description_1", duration1, time1);
+        Epic epic = new Epic("epic_1", "epic_description_1", duration, time1);
         Epic savedEpic = taskManager.addNewTask(epic);
-        Subtask subtask1 = new Subtask("subtask_1", "subtask_description_1", duration2, time2, 0);
-        Subtask subtask2 = new Subtask("subtask_2", "subtask_description_2", duration3, time3, 0);
-        Subtask subtask3 = new Subtask("subtask_3", "subtask_description_3", duration4, time4, 0);
+        Subtask subtask1 = new Subtask("subtask_1", "subtask_description_1", duration, time2, 0);
+        Subtask subtask2 = new Subtask("subtask_2", "subtask_description_2", duration, time3, 0);
+        Subtask subtask3 = new Subtask("subtask_3", "subtask_description_3", duration, time4, 0);
         taskManager.addNewTask(subtask1);
         taskManager.addNewTask(subtask2);
         taskManager.addNewTask(subtask3);
@@ -341,9 +334,9 @@ abstract class AbstractTaskManagerTest<T extends TaskManager> {
     @Test
     void deleteTask_shouldDeleteSubtaskWithSpecifiedId() {
         // prepare
-        Epic epic = new Epic("epic_1", "epic_description_1", duration1, time1);
+        Epic epic = new Epic("epic_1", "epic_description_1", duration, time1);
         taskManager.addNewTask(epic);
-        Subtask subtask = new Subtask("subtask_1", "subtask_description_1", duration2, time2, 0);
+        Subtask subtask = new Subtask("subtask_1", "subtask_description_1", duration, time2, 0);
         Subtask savedSubtask = taskManager.addNewTask(subtask);
 
         // do
@@ -356,9 +349,9 @@ abstract class AbstractTaskManagerTest<T extends TaskManager> {
     @Test
     void deleteTask_shouldDeleteAllTasks() {
         // prepare
-        Task task1 = new Task("task_1", "description_1", duration1, time1);
-        Task task2 = new Task("task_2", "description_2", duration2, time2);
-        Task task3 = new Task("task_3", "description_3", duration3, time3);
+        Task task1 = new Task("task_1", "description_1", duration, time1);
+        Task task2 = new Task("task_2", "description_2", duration, time2);
+        Task task3 = new Task("task_3", "description_3", duration, time3);
         Task savedTask1 = taskManager.addNewTask(task1);
         Task savedTask2 = taskManager.addNewTask(task2);
         Task savedTask3 = taskManager.addNewTask(task3);
@@ -377,9 +370,9 @@ abstract class AbstractTaskManagerTest<T extends TaskManager> {
     @Test
     void deleteTask_shouldDeleteAllEpics() {
         // prepare
-        Epic epic1 = new Epic("epic_1", "epic_description_1", duration1, time1);
-        Epic epic2 = new Epic("epic_2", "epic_description_2", duration2, time2);
-        Epic epic3 = new Epic("epic_3", "epic_description_3", duration3, time3);
+        Epic epic1 = new Epic("epic_1", "epic_description_1", duration, time1);
+        Epic epic2 = new Epic("epic_2", "epic_description_2", duration, time2);
+        Epic epic3 = new Epic("epic_3", "epic_description_3", duration, time3);
         Epic savedEpic1 = taskManager.addNewTask(epic1);
         Epic savedEpic2 = taskManager.addNewTask(epic2);
         Epic savedEpic3 = taskManager.addNewTask(epic3);
@@ -399,14 +392,14 @@ abstract class AbstractTaskManagerTest<T extends TaskManager> {
     void deleteTask_shouldDeleteAllSubtasks() {
         // prepare
         Epic epic1 = new Epic(0, "epic_1", "Epic epic_description_1",
-                TaskStatus.NEW, duration1, time1);
+                TaskStatus.NEW, duration, time1);
         taskManager.addNewTask(epic1);
         Subtask subtask1 = new Subtask("subtask_1", "subtask_description_1", TaskStatus.NEW,
-                duration2, time2, 0);
+                duration, time2, 0);
         Subtask subtask2 = new Subtask("subtask_2", "subtask_description_2", TaskStatus.NEW,
-                duration3, time3, 0);
+                duration, time3, 0);
         Subtask subtask3 = new Subtask("subtask_3", "subtask_description_3", TaskStatus.NEW,
-                duration4, time4, 0);
+                duration, time4, 0);
         Subtask savedSubtask1 = taskManager.addNewTask(subtask1);
         Subtask savedSubtask2 = taskManager.addNewTask(subtask2);
         Subtask savedSubtask3 = taskManager.addNewTask(subtask3);
@@ -425,8 +418,8 @@ abstract class AbstractTaskManagerTest<T extends TaskManager> {
     @Test
     void getTask_shouldGetTask() {
         // prepare
-        Task task = new Task("task_1", "description_1", TaskStatus.NEW, duration1, time1);
-        Task expectedTask = new Task(0,"task_1", "description_1", TaskStatus.NEW, duration1, time1);
+        Task task = new Task("task_1", "description_1", TaskStatus.NEW, duration, time1);
+        Task expectedTask = new Task(0,"task_1", "description_1", TaskStatus.NEW, duration, time1);
 
         // do
         Task actualTask = taskManager.addNewTask(task);
@@ -439,9 +432,9 @@ abstract class AbstractTaskManagerTest<T extends TaskManager> {
     @Test
     void getTask_shouldGetEpic() {
         // prepare
-        Epic epic = new Epic("epic_1", "epic_description_1", duration1, time1);
+        Epic epic = new Epic("epic_1", "epic_description_1", duration, time1);
         Epic expectedEpic = new Epic(0,"epic_1", "epic_description_1",
-                TaskStatus.NEW, duration1, time1);
+                TaskStatus.NEW, duration, time1);
 
         // do
         Epic actualEpic = taskManager.addNewTask(epic);
@@ -454,10 +447,10 @@ abstract class AbstractTaskManagerTest<T extends TaskManager> {
     @Test
     void getTask_shouldGetSubtask() {
         // prepare
-        Epic epic = new Epic("epic_1", "epic_description_1", duration1, time1);
+        Epic epic = new Epic("epic_1", "epic_description_1", duration, time1);
         taskManager.addNewTask(epic);
-        Subtask subtask = new Subtask("subtask_1", "subtask_description_1", duration2, time2, 0);
-        Subtask expectedSubtask = new Subtask(1,"subtask_1", "subtask_description_1", duration2, time2);
+        Subtask subtask = new Subtask("subtask_1", "subtask_description_1", duration, time2, 0);
+        Subtask expectedSubtask = new Subtask(1,"subtask_1", "subtask_description_1", duration, time2);
 
         // do
         Subtask actualSubtask = taskManager.addNewTask(subtask);
@@ -470,13 +463,13 @@ abstract class AbstractTaskManagerTest<T extends TaskManager> {
     @Test
     void getTask_shouldGetAllTasks() {
         // prepare
-        Task task1 = new Task("task_1", "description_1", duration1, time1);
-        Task task2 = new Task("task_2", "description_2", duration2, time2);
-        Task task3 = new Task("task_3", "description_3", duration3, time3);
+        Task task1 = new Task("task_1", "description_1", duration, time1);
+        Task task2 = new Task("task_2", "description_2", duration, time2);
+        Task task3 = new Task("task_3", "description_3", duration, time3);
 
-        Task expectedTask1 = new Task(0,"task_1", "description_1", duration1, time1);
-        Task expectedTask2 = new Task(1,"task_2", "description_2", duration2, time2);
-        Task expectedTask3 = new Task(2,"task_3", "description_3", duration3, time3);
+        Task expectedTask1 = new Task(0,"task_1", "description_1", duration, time1);
+        Task expectedTask2 = new Task(1,"task_2", "description_2", duration, time2);
+        Task expectedTask3 = new Task(2,"task_3", "description_3", duration, time3);
 
         // do
         taskManager.addNewTask(task1);
@@ -494,15 +487,15 @@ abstract class AbstractTaskManagerTest<T extends TaskManager> {
     @Test
     void getTask_shouldGetAllEpics() {
         // prepare
-        Epic epic1 = new Epic("epic_1", "epic_description_1", duration1, time1);
-        Epic epic2 = new Epic("epic_2", "epic_description_2", duration2, time2);
-        Epic epic3 = new Epic("epic_3", "epic_description_3", duration3, time3);
+        Epic epic1 = new Epic("epic_1", "epic_description_1", duration, time1);
+        Epic epic2 = new Epic("epic_2", "epic_description_2", duration, time2);
+        Epic epic3 = new Epic("epic_3", "epic_description_3", duration, time3);
         Epic expectedEpic1 = new Epic(0,"epic_1", "epic_description_1",
-                TaskStatus.NEW, duration1, time1);
+                TaskStatus.NEW, duration, time1);
         Epic expectedEpic2 = new Epic(1,"epic_2", "epic_description_2",
-                TaskStatus.NEW, duration2, time2);
+                TaskStatus.NEW, duration, time2);
         Epic expectedEpic3 = new Epic(2,"epic_3", "epic_description_3",
-                TaskStatus.NEW, duration3, time3);
+                TaskStatus.NEW, duration, time3);
 
         // do
         taskManager.addNewTask(epic1);
@@ -519,17 +512,17 @@ abstract class AbstractTaskManagerTest<T extends TaskManager> {
     @Test
     void getTask_shouldGetAllSubtasks() {
         // prepare
-        Epic epic1 = new Epic("epic_1", "epic_description_1", duration1, time1);
+        Epic epic1 = new Epic("epic_1", "epic_description_1", duration, time1);
         taskManager.addNewTask(epic1);
-        Subtask subtask1 = new Subtask("subtask_1", "subtask_description_1", duration2, time2, 0);
-        Subtask subtask2 = new Subtask("subtask_2", "subtask_description_2", duration3, time3, 0);
-        Subtask subtask3 = new Subtask("subtask_3", "subtask_description_3", duration4, time4, 0);
+        Subtask subtask1 = new Subtask("subtask_1", "subtask_description_1", duration, time2, 0);
+        Subtask subtask2 = new Subtask("subtask_2", "subtask_description_2", duration, time3, 0);
+        Subtask subtask3 = new Subtask("subtask_3", "subtask_description_3", duration, time4, 0);
         Subtask expectedSubtask1 = new Subtask(1,"subtask_1", "subtask_description_1",
-                TaskStatus.NEW, duration2, time2, 0);
+                TaskStatus.NEW, duration, time2, 0);
         Subtask expectedSubtask2 = new Subtask(2,"subtask_2", "subtask_description_2",
-                TaskStatus.NEW, duration3, time3, 0);
+                TaskStatus.NEW, duration, time3, 0);
         Subtask expectedSubtask3 = new Subtask(3,"subtask_3", "subtask_description_3",
-                TaskStatus.NEW, duration4, time4, 0);
+                TaskStatus.NEW, duration, time4, 0);
 
         // do
         taskManager.addNewTask(subtask1);
@@ -546,17 +539,17 @@ abstract class AbstractTaskManagerTest<T extends TaskManager> {
     @Test
     void getTask_shouldGetSubtasksOfEpic() {
         // prepare
-        Epic epic1 = new Epic("epic_1", "epic_description_1", duration1, time1);
+        Epic epic1 = new Epic("epic_1", "epic_description_1", duration, time1);
         Epic savedEpic = taskManager.addNewTask(epic1);
-        Subtask subtask1 = new Subtask("subtask_1", "subtask_description_1", duration2, time2, 0);
-        Subtask subtask2 = new Subtask("subtask_2", "subtask_description_2", duration3, time3, 0);
-        Subtask subtask3 = new Subtask("subtask_3", "subtask_description_3", duration4, time4, 0);
+        Subtask subtask1 = new Subtask("subtask_1", "subtask_description_1", duration, time2, 0);
+        Subtask subtask2 = new Subtask("subtask_2", "subtask_description_2", duration, time3, 0);
+        Subtask subtask3 = new Subtask("subtask_3", "subtask_description_3", duration, time4, 0);
         Subtask expectedSubtask1 = new Subtask(1,"subtask_1", "subtask_description_1",
-                TaskStatus.NEW, duration2, time2, 0);
+                TaskStatus.NEW, duration, time2, 0);
         Subtask expectedSubtask2 = new Subtask(2,"subtask_2", "subtask_description_2",
-                TaskStatus.NEW, duration3, time3, 0);
+                TaskStatus.NEW, duration, time3, 0);
         Subtask expectedSubtask3 = new Subtask(3,"subtask_3", "subtask_description_3",
-                TaskStatus.NEW, duration4, time4, 0);
+                TaskStatus.NEW, duration, time4, 0);
 
         // do
         taskManager.addNewTask(subtask1);
