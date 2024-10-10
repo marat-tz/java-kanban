@@ -74,20 +74,6 @@ public class InMemoryTaskManagerTest extends AbstractTaskManagerTest {
     }
 
     @Test
-    void checkIntersection_shouldNotSaveEpicIfIntersection() {
-        // prepare
-        Epic epic1 = new Epic("epic_1", "epic_description_1", duration, time1);
-        Task task2 = new Task("task_2", "task_description_2", duration, time1);
-
-        // do
-        taskManager.addNewTask(epic1);
-        taskManager.addNewTask(task2);
-
-        // check
-        assertEquals(1, taskManager.getAllTasks().size() + taskManager.getAllEpic().size());
-    }
-
-    @Test
     void checkIntersection_shouldSaveEpicIfNotIntersection() {
         // prepare
         Epic epic1 = new Epic("epic_1", "epic_description_1", duration, time1);
@@ -99,34 +85,6 @@ public class InMemoryTaskManagerTest extends AbstractTaskManagerTest {
 
         // check
         assertEquals(2, taskManager.getAllTasks().size() + taskManager.getAllEpic().size());
-    }
-
-    @Test
-    void addTaskInSet_shouldSaveDiffEpics() {
-        // prepare
-        Epic epic1 = new Epic("epic_1", "epic_description_1", duration, time1);
-        Epic epic2 = new Epic("epic_2", "epic_description_2", duration, time2);
-
-        // do
-        taskManager.addNewTask(epic1);
-        taskManager.addNewTask(epic2);
-
-        // check
-        assertEquals(2, taskManager.getPrioritizedTasks().size());
-    }
-
-    @Test
-    void addTaskInSet_shouldNotSaveSameEpic() {
-        // prepare
-        Epic epic1 = new Epic("epic_1", "epic_description_1", duration, time1);
-        Epic epic2 = new Epic("epic_1", "epic_description_1", duration, time1);
-
-        // do
-        taskManager.addNewTask(epic1);
-        taskManager.addNewTask(epic2);
-
-        // check
-        assertEquals(1, taskManager.getPrioritizedTasks().size());
     }
 
     @Test

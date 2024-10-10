@@ -107,6 +107,48 @@ public class FileBackedTaskManagerTest extends AbstractTaskManagerTest {
     }
 
     @Test
+    void save_shouldSaveFewTasksWithTime() {
+        // prepare
+        Task task = new Task("Task 1", "Task Description", TaskStatus.NEW, duration, time1);
+        Epic epic = new Epic("Epic 1", "Epic Description");
+
+        // do
+        Task actualTask = fileBackedTaskManager.addNewTask(task);
+        Epic actualEpic = fileBackedTaskManager.addNewTask(epic);
+
+        Subtask subtask = new Subtask("Subtask 1", "Subtask Description",
+                TaskStatus.NEW, duration, time3, epic.getId());
+        Subtask actualSub = fileBackedTaskManager.addNewTask(subtask);
+
+        // check
+        boolean isTaskTime = false;
+        boolean isEpicTime = false;
+        boolean isSubTime = false;
+
+        try {
+            for (String s : Files.readAllLines(file.toPath())) {
+                if (s.contains(actualTask.getStartTime().toString())) {
+                    isTaskTime = true;
+
+                } else if (s.contains(actualEpic.getStartTime().toString()) && isEpicTime != true) {
+                    isEpicTime = true;
+
+                } else if (s.contains(actualSub.getStartTime().toString())) {
+                    isSubTime = true;
+                }
+            }
+
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+
+
+        assertTrue(isTaskTime);
+        assertTrue(isEpicTime);
+        assertTrue(isSubTime);
+    }
+
+    @Test
     void save_shouldLoadTasks() {
         // prepare
         Task task = new Task(0, "Task 1", "Task Description", TaskStatus.NEW, duration, time1);
