@@ -379,12 +379,10 @@ public class InMemoryTaskManager implements TaskManager {
         int tasksSum = 0;
 
         if (!idEpic.isEmpty()) {
-                idEpic.values().forEach(epic -> {
-                    epic.getEpicSubtasksId().forEach(subtaskId -> {
-                        idSubtask.remove(subtaskId);
-                        historyManager.remove(subtaskId);
-                    });
-                });
+            idEpic.values().forEach(epic -> epic.getEpicSubtasksId().forEach(subtaskId -> {
+                idSubtask.remove(subtaskId);
+                historyManager.remove(subtaskId);
+            }));
 
             tasksSum = idEpic.size();
             idEpic.keySet().forEach(historyManager::remove);
@@ -466,9 +464,7 @@ public class InMemoryTaskManager implements TaskManager {
         }
 
         if (Objects.nonNull(epicInMap.getEpicSubtasksId())) {
-            epicInMap.getEpicSubtasksId().forEach(subtaskId -> {
-                subtasks.add(idSubtask.get(subtaskId));
-            });
+            epicInMap.getEpicSubtasksId().forEach(subtaskId -> subtasks.add(idSubtask.get(subtaskId)));
         }
 
         return subtasks;
@@ -477,7 +473,6 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void deleteEpicSubtasks(Integer epicId) {
         Epic epicInMap;
-        Task removedTask;
 
         if (!Objects.nonNull(idEpic.get(epicId))) {
             System.out.println("Map not contains epic ");
@@ -486,9 +481,7 @@ public class InMemoryTaskManager implements TaskManager {
             epicInMap = idEpic.get(epicId);
             if (!getEpicSubtasks(epicId).isEmpty()) {
                 epicInMap.getEpicSubtasksId().forEach(historyManager::remove);
-                epicInMap.getEpicSubtasksId().forEach(subtaskId -> {
-                    sortedTasks.remove(idSubtask.remove(subtaskId));
-                });
+                epicInMap.getEpicSubtasksId().forEach(subtaskId -> sortedTasks.remove(idSubtask.remove(subtaskId)));
 
                 epicInMap.clearSubtasks();
                 refreshEpicTimeManySubtasks(epicId);
