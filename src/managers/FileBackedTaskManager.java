@@ -70,16 +70,11 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         Duration duration = Duration.ofMinutes(Integer.parseInt(temp[5]));
         LocalDateTime startTime = LocalDateTime.parse(temp[6]);
 
-        switch (temp[3]) {
-            case "IN_PROGRESS":
-                status = TaskStatus.IN_PROGRESS;
-                break;
-            case "DONE":
-                status = TaskStatus.DONE;
-                break;
-            default:
-                status = TaskStatus.NEW;
-        }
+        status = switch (temp[3]) {
+            case "IN_PROGRESS" -> TaskStatus.IN_PROGRESS;
+            case "DONE" -> TaskStatus.DONE;
+            default -> TaskStatus.NEW;
+        };
 
         switch (temp[1]) {
             case "TASK":
@@ -113,22 +108,17 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                     maxId = Math.max(maxId, task.getId());
 
                     switch (task.getType()) {
-                        case TASK:
-                            tasks.put(task.getId(), task); // прибавляем taskId на случай если уже есть задачи
-                            break;
-                        case SUBTASK:
-                            subtasks.put(task.getId(), (Subtask) task);
-                            break;
-                        case EPIC:
-                            epics.put(task.getId(), (Epic) task);
+                        case TASK -> tasks.put(task.getId(), task);
+                        case SUBTASK -> subtasks.put(task.getId(), (Subtask) task);
+                        case EPIC -> epics.put(task.getId(), (Epic) task);
                     }
                 }
             }
 
-            for (Subtask sub : subtasks.values()) {
-                Epic epic = epics.get(sub.getEpicId());
-                epic.addSubtask(sub);
-            }
+            subtasks.values().forEach(subtask -> {
+                Epic epic = epics.get(subtask.getEpicId());
+                epic.addSubtask(subtask);
+            });
 
         } catch (IOException ex) {
             throw new ManagerLoadException(ex.getMessage());
