@@ -27,7 +27,6 @@ public class Task implements Comparable<Task> {
     public Task(String name, String description) {
         this.name = name;
         this.description = description;
-        this.status = TaskStatus.NEW;
     }
 
     public Task(int id, String name, String description, TaskStatus status) {
@@ -136,7 +135,8 @@ public class Task implements Comparable<Task> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Task task = (Task) o;
-        return id == task.id && name.equals(task.name) && description.equals(task.description);
+        return id == task.id && name.equals(task.name)
+                && description.equals(task.description);
     }
 
     @Override
