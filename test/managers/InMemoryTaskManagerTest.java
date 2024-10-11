@@ -11,7 +11,7 @@ import java.time.Duration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class InMemoryTaskManagerTest extends AbstractTaskManagerTest {
+public class InMemoryTaskManagerTest extends AbstractTaskManagerTest<TaskManager> {
     @BeforeEach
     void initManager() {
         taskManager = Managers.getDefault();

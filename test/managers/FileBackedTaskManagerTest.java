@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class FileBackedTaskManagerTest extends AbstractTaskManagerTest {
+public class FileBackedTaskManagerTest extends AbstractTaskManagerTest<TaskManager> {
 
     private FileBackedTaskManager fileBackedTaskManager;
 
@@ -74,20 +74,9 @@ public class FileBackedTaskManagerTest extends AbstractTaskManagerTest {
     @Test
     void save_shouldThrowsExceptionLoadWrongFile() {
         // prepare
-        Task task = null;
-
         // do
-        fileBackedTaskManager.addNewTask(task);
-        FileBackedTaskManager newManager = Managers.getFileBackedTaskManager(file);
-
-        assertThrows(ManagerLoadException.class, () -> {
-            newManager.loadFromFile(new File("file"));
-        });
-
         // check
-        assertTrue(newManager.idTask.isEmpty());
-        assertTrue(newManager.idEpic.isEmpty());
-        assertTrue(newManager.idSubtask.isEmpty());
+        assertThrows(ManagerLoadException.class, () -> FileBackedTaskManager.loadFromFile(new File("file")));
     }
 
     @Test
@@ -150,7 +139,7 @@ public class FileBackedTaskManagerTest extends AbstractTaskManagerTest {
                 if (s.contains(actualTask.getStartTime().toString())) {
                     isTaskTime = true;
 
-                } else if (s.contains(actualEpic.getStartTime().toString()) && isEpicTime != true) {
+                } else if (s.contains(actualEpic.getStartTime().toString()) && !isEpicTime) {
                     isEpicTime = true;
 
                 } else if (s.contains(actualSub.getStartTime().toString())) {
