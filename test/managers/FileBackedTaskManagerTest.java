@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FileBackedTaskManagerTest extends AbstractTaskManagerTest {
@@ -63,6 +64,25 @@ public class FileBackedTaskManagerTest extends AbstractTaskManagerTest {
         } catch (ManagerLoadException exception) {
             exception.printStackTrace();
         }
+
+        // check
+        assertTrue(newManager.idTask.isEmpty());
+        assertTrue(newManager.idEpic.isEmpty());
+        assertTrue(newManager.idSubtask.isEmpty());
+    }
+
+    @Test
+    void save_shouldThrowsExceptionLoadWrongFile() {
+        // prepare
+        Task task = null;
+
+        // do
+        fileBackedTaskManager.addNewTask(task);
+        FileBackedTaskManager newManager = Managers.getFileBackedTaskManager(file);
+
+        assertThrows(ManagerLoadException.class, () -> {
+            newManager.loadFromFile(new File("file"));
+        });
 
         // check
         assertTrue(newManager.idTask.isEmpty());
