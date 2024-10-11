@@ -17,10 +17,13 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
 
     private final File file;
+    private static final Logger logger = Logger.getAnonymousLogger();
 
     public FileBackedTaskManager(File file) {
         this.file = file;
@@ -134,7 +137,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         try {
             save();
         } catch (ManagerSaveException ex) {
-            ex.printStackTrace();
+            logger.log(Level.SEVERE, "error while adding task", ex);
         }
 
         return task;
@@ -147,7 +150,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         try {
             save();
         } catch (ManagerSaveException ex) {
-            ex.printStackTrace();
+            logger.log(Level.SEVERE, "error while adding epic", ex);
         }
 
         return epic;
@@ -160,7 +163,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         try {
             save();
         } catch (ManagerSaveException ex) {
-            ex.printStackTrace();
+            logger.log(Level.SEVERE, "error while adding subtask", ex);
         }
 
         return subtask;
@@ -173,7 +176,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         try {
             save();
         } catch (ManagerSaveException ex) {
-            ex.printStackTrace();
+            logger.log(Level.SEVERE, "error while updating task", ex);
         }
 
         return task;
@@ -186,7 +189,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         try {
             save();
         } catch (ManagerSaveException ex) {
-            ex.printStackTrace();
+            logger.log(Level.SEVERE, "error while updating subtask", ex);
         }
 
         return subtask;
@@ -199,7 +202,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         try {
             save();
         } catch (ManagerSaveException ex) {
-            ex.printStackTrace();
+            logger.log(Level.SEVERE, "error while updating epic", ex);
         }
 
         return epic;
@@ -212,7 +215,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         try {
             save();
         } catch (ManagerSaveException ex) {
-            ex.printStackTrace();
+            logger.log(Level.SEVERE, "error while removing task", ex);
         }
 
         return task;
@@ -225,7 +228,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         try {
             save();
         } catch (ManagerSaveException ex) {
-            ex.printStackTrace();
+            logger.log(Level.SEVERE, "error while removing all tasks", ex);
         }
     }
 
@@ -236,7 +239,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         try {
             save();
         } catch (ManagerSaveException ex) {
-            ex.printStackTrace();
+            logger.log(Level.SEVERE, "error while removing all subtasks", ex);
         }
     }
 
@@ -247,7 +250,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         try {
             save();
         } catch (ManagerSaveException ex) {
-            ex.printStackTrace();
+            logger.log(Level.SEVERE, "error while removing all epics", ex);
         }
     }
 
@@ -258,7 +261,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         try {
             save();
         } catch (ManagerSaveException ex) {
-            ex.printStackTrace();
+            logger.log(Level.SEVERE, "error while removing all epic subtasks", ex);
         }
     }
 }
