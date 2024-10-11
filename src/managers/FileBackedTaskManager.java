@@ -130,138 +130,84 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         return new FileBackedTaskManager(file, tasks, epics, subtasks, maxId);
     }
 
-    @Override
-    public Task addNewTask(Task newTask) {
-        Task task = super.addNewTask(newTask);
-
+    private void tryToSaveTask() {
         try {
             save();
         } catch (ManagerSaveException ex) {
-            logger.log(Level.SEVERE, "error while adding task", ex);
+            logger.log(Level.SEVERE, "error while adding, removing or modifying task", ex);
         }
+    }
 
+    @Override
+    public Task addNewTask(Task newTask) {
+        Task task = super.addNewTask(newTask);
+        tryToSaveTask();
         return task;
     }
 
     @Override
     public Epic addNewTask(Epic newEpic) {
         Epic epic = super.addNewTask(newEpic);
-
-        try {
-            save();
-        } catch (ManagerSaveException ex) {
-            logger.log(Level.SEVERE, "error while adding epic", ex);
-        }
-
+        tryToSaveTask();
         return epic;
     }
 
     @Override
     public Subtask addNewTask(Subtask newSubtask) {
         Subtask subtask = super.addNewTask(newSubtask);
-
-        try {
-            save();
-        } catch (ManagerSaveException ex) {
-            logger.log(Level.SEVERE, "error while adding subtask", ex);
-        }
-
+        tryToSaveTask();
         return subtask;
     }
 
     @Override
     public Task updateTask(Task updatedTask) {
         Task task = super.updateTask(updatedTask);
-
-        try {
-            save();
-        } catch (ManagerSaveException ex) {
-            logger.log(Level.SEVERE, "error while updating task", ex);
-        }
-
+        tryToSaveTask();
         return task;
     }
 
     @Override
     public Subtask updateTask(Subtask subtaskUpdate) {
         Subtask subtask = super.updateTask(subtaskUpdate);
-
-        try {
-            save();
-        } catch (ManagerSaveException ex) {
-            logger.log(Level.SEVERE, "error while updating subtask", ex);
-        }
-
+        tryToSaveTask();
         return subtask;
     }
 
     @Override
     public Epic updateTask(Epic epicUpdate) {
         Epic epic = super.updateTask(epicUpdate);
-
-        try {
-            save();
-        } catch (ManagerSaveException ex) {
-            logger.log(Level.SEVERE, "error while updating epic", ex);
-        }
-
+        tryToSaveTask();
         return epic;
     }
 
     @Override
     public Task deleteTask(Integer taskId) {
         Task task =  super.deleteTask(taskId);
-
-        try {
-            save();
-        } catch (ManagerSaveException ex) {
-            logger.log(Level.SEVERE, "error while removing task", ex);
-        }
-
+        tryToSaveTask();
         return task;
     }
 
     @Override
     public void deleteAllTasks() {
         super.deleteAllTasks();
-
-        try {
-            save();
-        } catch (ManagerSaveException ex) {
-            logger.log(Level.SEVERE, "error while removing all tasks", ex);
-        }
+        tryToSaveTask();
     }
 
     @Override
     public void deleteAllSubtasks() {
         super.deleteAllSubtasks();
-
-        try {
-            save();
-        } catch (ManagerSaveException ex) {
-            logger.log(Level.SEVERE, "error while removing all subtasks", ex);
-        }
+        tryToSaveTask();
     }
 
     @Override
     public void deleteAllEpic() {
         super.deleteAllEpic();
-
-        try {
-            save();
-        } catch (ManagerSaveException ex) {
-            logger.log(Level.SEVERE, "error while removing all epics", ex);
-        }
+        tryToSaveTask();
     }
 
     @Override
     public void deleteEpicSubtasks(Integer epicId) {
         super.deleteEpicSubtasks(epicId);
-
-        try {
-            save();
-        } catch (ManagerSaveException ex) {
-            logger.log(Level.SEVERE, "error while removing all epic subtasks", ex);
-        }
+        tryToSaveTask();
     }
 }
