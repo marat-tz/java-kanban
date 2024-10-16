@@ -1,61 +1,36 @@
-import managers.Managers;
+import exceptions.ManagerLoadException;
+import managers.FileBackedTaskManager;
 import managers.TaskManager;
-import tasks.Epic;
 import tasks.Subtask;
-import tasks.Task;
 import tasks.TaskStatus;
 
 import java.io.File;
+import java.time.Duration;
+import java.time.LocalDateTime;
 
 public class MainFileManager {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws ManagerLoadException {
+
+        Duration duration = Duration.ofMinutes(40);
+        LocalDateTime time1 = LocalDateTime.of(2024, 10, 10, 20, 10);
+
         File file = new File("J:\\_YandexProjects\\java-kanban\\files\\backup.csv");
-        TaskManager taskManager = Managers.getFileBackedTaskManager(file);
 
-        Task newTask;
-        Epic newEpic;
-        Subtask newSubtask;
+        TaskManager taskManager = FileBackedTaskManager.loadFromFile(file);
+        System.out.println(taskManager.getAllEpic());
+        System.out.println(taskManager.getAllSubtasks());
 
-        System.out.println("Создание Task-ов:");
+        Subtask subtask = new Subtask(1, "Сабтаск 1", "Описание сабтаска 1", TaskStatus.NEW, duration, time1, 0);
+        taskManager.updateTask(subtask);
 
-        newTask = new Task("Задача 1", "Added Task", TaskStatus.NEW);
-        System.out.println(taskManager.addNewTask(newTask));
+        System.out.println(taskManager.getAllEpic());
+        System.out.println(taskManager.getAllSubtasks());
 
-        newTask = new Task("Задача 2", "Added Task", TaskStatus.NEW);
-        System.out.println(taskManager.addNewTask(newTask));
+        taskManager.deleteTask(1);
 
-        newTask = new Task("Задача 3", "Added Task", TaskStatus.NEW);
-        System.out.println(taskManager.addNewTask(newTask));
-        System.out.println("--------------------");
-
-        System.out.println("Создание Epic-ов:");
-
-        newEpic = new Epic("Эпик 1", "Added Epic");
-        System.out.println(taskManager.addNewTask(newEpic));
-
-        newEpic = new Epic("Эпик 2", "Added Epic");
-        System.out.println(taskManager.addNewTask(newEpic));
-
-        newEpic = new Epic("Эпик 3", "Added Epic");
-        System.out.println(taskManager.addNewTask(newEpic));
-        System.out.println("--------------------");
-
-        System.out.println("Создание Subtask-ов:");
-
-        newSubtask = new Subtask("Подзадача 1", "Added Subtask", 4);
-        System.out.println(taskManager.addNewTask(newSubtask));
-
-        newSubtask = new Subtask("Подзадача 2", "Added Subtask", 4);
-        System.out.println(taskManager.addNewTask(newSubtask));
-
-        newSubtask = new Subtask("Подзадача 3", "Added Subtask", 5);
-        System.out.println(taskManager.addNewTask(newSubtask));
-        System.out.println("--------------------");
-
-        //newSubtask = new Subtask(8, "obnova", "555");
-        //taskManager.updateTask(newSubtask);
-
+        System.out.println(taskManager.getAllEpic());
+        System.out.println(taskManager.getAllSubtasks());
 
     }
 }

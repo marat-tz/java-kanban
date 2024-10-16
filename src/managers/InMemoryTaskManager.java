@@ -58,10 +58,10 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     protected void addTaskInSet(Task task) {
-        if (Objects.nonNull(task.getStartTime()) && !sortedTasks.contains(task)) {
+        if (Objects.nonNull(task.getStartTime())) {
             sortedTasks.add(task);
         } else {
-            System.out.println("Task is null or already contained");
+            System.out.println("Task startTime is null");
         }
     }
 
@@ -220,13 +220,20 @@ public class InMemoryTaskManager implements TaskManager {
 
             if (idSubtask.containsKey(subtaskId)) {
                 Subtask subtaskMap = idSubtask.get(subtaskId);
+                if (subtaskUpdate.getEpicId() == null) {
+                    subtaskUpdate.setEpicId(idEpic.get(subtaskMap.getEpicId()));
+                }
+            } else {
+                System.out.println("Task with id " + subtaskId + " not exist");
+                return null;
+            }
+
+            if (idSubtask.containsKey(subtaskId)
+                    && subtaskUpdate.getEpicId().equals(idSubtask.get(subtaskId).getEpicId())) {
 
                 if (subtaskUpdate.getStatus() == null) {
                     subtaskUpdate.setStatus(idSubtask.get(subtaskId).getStatus());
                 }
-
-                if (subtaskUpdate.getEpicId() == null) {
-                    subtaskUpdate.setEpicId(idEpic.get(subtaskMap.getEpicId()));
 
                     if (isTaskTimeMatch(subtaskUpdate)) {
                         System.out.println("Updated subtask time is match with existent task");
@@ -236,7 +243,7 @@ public class InMemoryTaskManager implements TaskManager {
                     idSubtask.put(subtaskId, subtaskUpdate);
                     refreshEpicStatus(subtaskUpdate.getEpicId());
                     refreshEpicTimeOneSubtask(subtaskUpdate);
-                    System.out.print("Updated subtask: " + subtaskUpdate);
+                    System.out.println("Updated subtask: " + subtaskUpdate);
 
                     // если указан другой epic-id, то нужно удалить сабтаск у старого epic
                 } else if (!subtaskUpdate.getEpicId().equals(idSubtask.get(subtaskId).getEpicId())) {
@@ -251,10 +258,10 @@ public class InMemoryTaskManager implements TaskManager {
 
                     idSubtask.put(subtaskId, subtaskUpdate);
                     idEpic.get(subtaskUpdate.getEpicId()).addSubtask(subtaskUpdate);
+                    refreshEpicTimeOneSubtask(subtaskUpdate);
                     refreshEpicStatus(subtaskUpdate.getEpicId());
                     System.out.println("Updated subtask: " + subtaskUpdate);
 
-                }
 
             } else {
                 System.out.println("Task with id " + subtaskId + " not exist");
@@ -269,6 +276,8 @@ public class InMemoryTaskManager implements TaskManager {
         addTaskInSet(subtaskUpdate);
         return subtaskUpdate;
     }
+
+
 
     @Override
     public Epic updateTask(Epic epicUpdate) {
@@ -516,15 +525,26 @@ public class InMemoryTaskManager implements TaskManager {
     protected void refreshEpicTimeOneSubtask(Subtask subtask) {
         Epic epic = idEpic.get(subtask.getEpicId());
 
-        if (Objects.isNull(epic.getStartTime()) || epic.getStartTime().isAfter(subtask.getStartTime())) {
+        if (epic.getEpicSubtasksId().size() == 1) {
+            epic.setStartTime(subtask.getStartTime());
+        } else if (Objects.isNull(epic.getStartTime()) || epic.getStartTime().isAfter(subtask.getStartTime())) {
             epic.setStartTime(subtask.getStartTime());
         }
 
-        if (Objects.isNull(epic.getEndTime()) || epic.getEndTime().isBefore(subtask.getEndTime())) {
+        if (epic.getEpicSubtasksId().size() == 1) {
+            epic.setEndTime(subtask.getEndTime());
+        } else if (Objects.isNull(epic.getEndTime()) || epic.getEndTime().isBefore(subtask.getEndTime())) {
             epic.setEndTime(subtask.getEndTime());
         }
 
-        epic.setDuration(Duration.between(epic.getStartTime(), epic.getEndTime()));
+        List<Subtask> subtasks = getEpicSubtasks(epic.getId());
+        Duration duration = subtasks
+                .stream()
+                .map(Subtask::getDuration)
+                .filter(Objects::nonNull)
+                .reduce(Duration.ZERO, Duration::plus);
+
+        epic.setDuration(duration);
     }
 
     protected void refreshEpicTimeManySubtasks(Integer epicId) {
@@ -546,7 +566,12 @@ public class InMemoryTaskManager implements TaskManager {
                     .max(LocalDateTime::compareTo)
                     .orElse(null);
 
-            Duration duration = Duration.between(startTime, endTime);
+            // Duration duration = Duration.between(startTime, endTime);
+            Duration duration = subtasks
+                    .stream()
+                    .map(Subtask::getDuration)
+                    .filter(Objects::nonNull)
+                    .reduce(Duration.ZERO, Duration::plus);
 
             epic.setStartTime(startTime);
             epic.setEndTime(endTime);
