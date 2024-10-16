@@ -2,7 +2,6 @@ package managers;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import tasks.Epic;
 import tasks.Subtask;
 import tasks.Task;
@@ -10,9 +9,12 @@ import tasks.TaskStatus;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
-import static org.junit.jupiter.api.Assertions.*;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 abstract class AbstractTaskManagerTest<T extends TaskManager> {
 
@@ -180,20 +182,23 @@ abstract class AbstractTaskManagerTest<T extends TaskManager> {
     void updateTask_shouldUpdateSubtaskEpicId() {
         // prepare
         Epic epic1 = new Epic("epic_1", "epic_description_1", duration, time1);
-        Epic epic2 = new Epic("epic_1", "epic_description_1", duration, time2);
+        Epic epic2 = new Epic("epic_2", "epic_description_2", duration, time2);
+
         taskManager.addNewTask(epic1);
         taskManager.addNewTask(epic2);
+
         Subtask subtask = new Subtask("subtask_1", "subtask_description_1", duration, time3, 0);
         Subtask updateSubtask = new Subtask(2,"subtask_1", "subtask_description_1",
                 TaskStatus.NEW, duration, time3,1);
+
         Subtask savedSubtask = taskManager.addNewTask(subtask);
 
         // do
         // check
         assertEquals(0, savedSubtask.getEpicId());
+        assertEquals(2, epic1.getEpicSubtasksId().get(0));
         Subtask updatedSubtask = taskManager.updateTask(updateSubtask);
         assertEquals(1, updatedSubtask.getEpicId());
-        assertEquals(new ArrayList<>(), epic1.getEpicSubtasksId());
         assertEquals(2, epic2.getEpicSubtasksId().get(0));
     }
 

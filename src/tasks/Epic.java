@@ -57,7 +57,7 @@ public class Epic extends Task {
         return endTime;
     }
 
-    public ArrayList<Integer> getEpicSubtasksId() {
+    public List<Integer> getEpicSubtasksId() {
         return new ArrayList<>(epicSubtasks);
     }
 
@@ -72,6 +72,7 @@ public class Epic extends Task {
     public void addSubtask(Subtask subtask) {
         if (Objects.nonNull(subtask)) {
             epicSubtasks.add(subtask.getId());
+            System.out.println("Subtask added in epic " + getId() + " list");
         } else {
             System.out.println("Subtask can't be null");
         }

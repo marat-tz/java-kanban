@@ -123,7 +123,7 @@ public class InMemoryTaskManagerTest extends AbstractTaskManagerTest<TaskManager
         // check
         assertEquals(time2, taskManager.getEpic(0).getStartTime());
         assertEquals(time4.plus(duration), taskManager.getEpic(0).getEndTime());
-        assertEquals(Duration.ofMinutes(130), taskManager.getEpic(0).getDuration());
+        assertEquals(Duration.ofMinutes(30), taskManager.getEpic(0).getDuration());
     }
 
     @Test
@@ -146,10 +146,10 @@ public class InMemoryTaskManagerTest extends AbstractTaskManagerTest<TaskManager
         // check
         assertEquals(time2, taskManager.getEpic(0).getStartTime());
         assertEquals(time4.plus(duration), taskManager.getEpic(0).getEndTime());
-        assertEquals(Duration.ofMinutes(130), taskManager.getEpic(0).getDuration());
+        assertEquals(Duration.ofMinutes(30), taskManager.getEpic(0).getDuration());
 
         taskManager.deleteTask(3);
-        assertEquals(Duration.ofMinutes(70), taskManager.getEpic(0).getDuration());
+        assertEquals(Duration.ofMinutes(20), taskManager.getEpic(0).getDuration());
         assertEquals(time3.plus(duration), taskManager.getEpic(0).getEndTime());
     }
 
@@ -172,10 +172,10 @@ public class InMemoryTaskManagerTest extends AbstractTaskManagerTest<TaskManager
 
         // check
         assertEquals(time2, taskManager.getEpic(0).getStartTime());
-        assertEquals(Duration.ofMinutes(130), taskManager.getEpic(0).getDuration());
+        assertEquals(Duration.ofMinutes(30), taskManager.getEpic(0).getDuration());
 
         taskManager.deleteTask(1);
-        assertEquals(Duration.ofMinutes(70), taskManager.getEpic(0).getDuration());
+        assertEquals(Duration.ofMinutes(20), taskManager.getEpic(0).getDuration());
         assertEquals(time3, taskManager.getEpic(0).getStartTime());
     }
 }
