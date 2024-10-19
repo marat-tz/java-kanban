@@ -133,8 +133,9 @@ public class TaskHandler extends BaseHttpHandler {
                 case "DELETE":
                     return Endpoint.DELETE;
             }
+        }
 
-            if (pathParts.length == 3 && pathParts[1].equals("tasks")) {
+        if (pathParts.length == 3 && pathParts[1].equals("tasks")) {
                 switch (requestMethod) {
                     case "GET":
                         return Endpoint.GET_ONE;
@@ -142,9 +143,8 @@ public class TaskHandler extends BaseHttpHandler {
                         return Endpoint.DELETE;
                 }
 
-            }
-
         }
+
         return Endpoint.UNKNOWN;
     }
 
