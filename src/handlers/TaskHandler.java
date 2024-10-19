@@ -48,7 +48,6 @@ public class TaskHandler extends BaseHttpHandler {
             case POST_ADD:
                 Task addedTask = manager.addNewTask(gson.fromJson(body, Task.class));
                 response = taskSerialize(addedTask);
-                // TODO: тип должен определяться по пути
                 break;
 
             case POST_UPDATE: // сюда надо передавать json
