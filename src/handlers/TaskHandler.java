@@ -38,32 +38,19 @@ public class TaskHandler extends BaseHttpHandler {
         Endpoint endpoint = getEndpoint(path, inputMethod, body);
         Optional<Integer> taskId = getId(httpExchange);
 
-        Gson gson = new GsonBuilder()
-                .registerTypeAdapter(Duration.class, new DurationAdapter())
-                .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
-                .create();
-
         String response;
+
         switch (endpoint) {
             case POST_ADD:
-                Task addedTask = manager.addNewTask(gson.fromJson(body, Task.class));
-                response = taskSerialize(addedTask);
+                response = taskSerialize(addTask(body));
                 break;
 
-            case POST_UPDATE: // сюда надо передавать json
+            case POST_UPDATE:
                 response = "Update task";
                 break;
 
             case GET_ONE: // сделать, чтобы вместо Null было сообщение
-                if (taskId.isPresent()) {
-                    if (Objects.isNull(manager.getTask(taskId.get()))) {
-                        response = "Task with id " + taskId.get() + " is not exist";
-                    } else {
-                        response = taskSerialize(manager.getTask(taskId.get()));
-                    }
-                } else {
-                    response = "Incorrect id"; // нужно вернуть другой код
-                }
+                response = getTask(taskId);
                 break;
 
             case GET_ALL:
@@ -97,6 +84,34 @@ public class TaskHandler extends BaseHttpHandler {
         try (OutputStream os = httpExchange.getResponseBody()) {
             os.write(response.getBytes());
         }
+    }
+
+    private Task addTask(String body) {
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter(Duration.class, new DurationAdapter())
+                .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
+                .create();
+
+        Task addedTask = manager.addNewTask(gson.fromJson(body, Task.class));
+        return addedTask;
+    }
+
+    private String getTask(Optional<Integer> taskId) {
+        String response;
+
+        if (taskId.isPresent()) {
+            if (Objects.isNull(manager.getTask(taskId.get()))) {
+                response = "Task with id " + taskId.get() + " is not exist";
+
+            } else {
+                response = taskSerialize(manager.getTask(taskId.get()));
+            }
+
+        } else {
+            response = "Incorrect id"; // нужно вернуть другой код
+        }
+
+        return response;
     }
 
     private String taskSerialize(Task task) {
