@@ -99,7 +99,7 @@ public class InMemoryHistoryManager implements HistoryManager {
 
             if (!historyMap.containsKey(task.getId())) {
                 linkLast(copyTask);
-                System.out.println("Added new task with id = " + task.getId());
+                System.out.println("Added new task in history with id = " + task.getId());
 
             } else {
                 remove(task.getId());

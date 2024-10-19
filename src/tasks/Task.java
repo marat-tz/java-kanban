@@ -8,7 +8,7 @@ public class Task implements Comparable<Task> {
 
     protected String name;
     protected String description;
-    protected int id;
+    protected Integer id;
     protected TaskStatus status = TaskStatus.NEW;
     protected Duration duration;
     protected LocalDateTime startTime;
@@ -135,7 +135,7 @@ public class Task implements Comparable<Task> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Task task = (Task) o;
-        return id == task.id && name.equals(task.name)
+        return Objects.equals(id, task.id) && name.equals(task.name)
                 && description.equals(task.description);
     }
 

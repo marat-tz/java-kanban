@@ -70,8 +70,16 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         String name = temp[2];
         String description = temp[4];
         TaskStatus status;
-        Duration duration = Duration.ofMinutes(Integer.parseInt(temp[5]));
-        LocalDateTime startTime = LocalDateTime.parse(temp[6]);
+        LocalDateTime startTime;
+        Duration duration;
+
+        if (!temp[1].equals("EPIC")) {
+            duration = Duration.ofMinutes(Integer.parseInt(temp[5]));
+            startTime = LocalDateTime.parse(temp[6]);
+        } else {
+            duration = Duration.ZERO;
+            startTime = null;
+        }
 
         status = switch (temp[3]) {
             case "IN_PROGRESS" -> TaskStatus.IN_PROGRESS;
