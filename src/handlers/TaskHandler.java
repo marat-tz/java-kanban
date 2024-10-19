@@ -35,7 +35,7 @@ public class TaskHandler extends BaseHttpHandler {
         String path = httpExchange.getRequestURI().getPath();
         String body = new String(inputStreamBody.readAllBytes(), StandardCharsets.UTF_8);
 
-        Endpoint endpoint = getEndpoint(path, inputMethod);
+        Endpoint endpoint = getEndpoint(path, inputMethod, body);
         Optional<Integer> taskId = getId(httpExchange);
 
         Gson gson = new GsonBuilder()
@@ -117,71 +117,46 @@ public class TaskHandler extends BaseHttpHandler {
         return gson.toJson(tasks);
     }
 
-    private Endpoint getEndpoint(String requestPath, String requestMethod) {
+    private Endpoint getEndpoint(String requestPath, String requestMethod, String body) {
         String[] pathParts = requestPath.split("/");
 
         if (pathParts.length == 2 && pathParts[1].equals("tasks")) {
-            switch(requestMethod) {
+            switch (requestMethod) {
                 case "GET":
                     return Endpoint.GET_ALL;
                 case "POST":
-                    return Endpoint.POST_ADD;
+                    if (!body.contains("\"id\"")) {
+                        return Endpoint.POST_ADD;
+                    } else {
+                        return Endpoint.POST_UPDATE;
+                    }
                 case "DELETE":
                     return Endpoint.DELETE;
-            } // добавить Post Update
-        }
+            }
 
-        if (pathParts.length == 3 && pathParts[1].equals("tasks")) {
-            switch (requestMethod) {
-                case "GET":
-                    return Endpoint.GET_ONE;
-                case "DELETE":
-                    return Endpoint.DELETE;
+            if (pathParts.length == 3 && pathParts[1].equals("tasks")) {
+                switch (requestMethod) {
+                    case "GET":
+                        return Endpoint.GET_ONE;
+                    case "DELETE":
+                        return Endpoint.DELETE;
+                }
+
             }
 
         }
         return Endpoint.UNKNOWN;
     }
 
-    private Optional<Integer> getId(HttpExchange exchange) {
-        String[] pathParts = exchange.getRequestURI().getPath().split("/");
-        if (pathParts.length > 2) {
-            try {
-                return Optional.of(Integer.parseInt(pathParts[2]));
-            } catch (NumberFormatException exception) {
-                return Optional.empty();
+        private Optional<Integer> getId (HttpExchange exchange) {
+            String[] pathParts = exchange.getRequestURI().getPath().split("/");
+            if (pathParts.length > 2) {
+                try {
+                    return Optional.of(Integer.parseInt(pathParts[2]));
+                } catch (NumberFormatException exception) {
+                    return Optional.empty();
+                }
             }
+            return Optional.empty();
         }
-        return Optional.empty();
     }
-}
-
-
-//class SubtitleListTypeToken extends TypeToken<List<SubtitleItem>> {
-//
-//}
-
-    //List<SubtitleItem> parsed = gson.fromJson(subtitlesJson, new SubtitleListTypeToken().getType());
-
-
-
-//    private void handleGetComments(HttpExchange exchange) throws IOException {
-//        Optional<Integer> postIdOpt = getPostId(exchange);
-//        if(postIdOpt.isEmpty()) {
-//            writeResponse(exchange, "Некорректный идентификатор поста", 400);
-//            return;
-//        }
-//        int postId = postIdOpt.get();
-//
-//        for (Post post : posts) {
-//            if (post.getId() == postId) {
-//                String response = post.getComments().stream()
-//                        .map(Comment::toString)
-//                        .collect(Collectors.joining("\n"));
-//                writeResponse(exchange, response, 200);
-//                return;
-//            }
-//        }
-//
-//        writeResponse(exchange, "Пост с идентификатором " + postId + " не найден", 404);
-//    }
