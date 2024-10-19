@@ -11,8 +11,6 @@ public class Epic extends Task {
     protected LocalDateTime endTime;
     private List<Integer> epicSubtasks = new ArrayList<>();
 
-    protected final TaskType type = TaskType.EPIC;
-
     public Epic(String name, String description) {
         super(name, description, TaskStatus.NEW);
     }
@@ -66,7 +64,7 @@ public class Epic extends Task {
     }
 
     public TaskType getType() {
-        return type;
+        return TaskType.EPIC;
     }
 
     public void addSubtask(Subtask subtask) {
@@ -93,11 +91,13 @@ public class Epic extends Task {
     @Override
     public String toString() {
         if (Objects.isNull(duration)) {
-            return String.format("%s,%s,%s,%s,%s,%s,%s", id, type, name, status, description, null, startTime);
+            return String.format("%s,%s,%s,%s,%s,%s,%s", id, TaskType.EPIC, name, status, description, null, startTime);
+
         } else if (Objects.isNull(startTime)) {
-            return String.format("%s,%s,%s,%s,%s,%s,%s", id, type, name, status, description, null, null);
+            return String.format("%s,%s,%s,%s,%s,%s,%s", id, TaskType.EPIC, name, status, description, null, null);
+
         } else {
-            return String.format("%s,%s,%s,%s,%s,%s,%s", id, type, name, status, description,
+            return String.format("%s,%s,%s,%s,%s,%s,%s", id, TaskType.EPIC, name, status, description,
                     duration.toMinutes(), startTime);
         }
     }
