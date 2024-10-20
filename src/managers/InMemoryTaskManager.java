@@ -93,7 +93,7 @@ public class InMemoryTaskManager implements TaskManager {
             newTask.setId(newId);
 
             if (isTaskTimeMatch(newTask)) {
-                System.out.println("Task startTime is match with existent task");
+                System.out.println("Task startTime is match with existent task (addNewTask)");
                 return null;
             }
 
@@ -111,7 +111,7 @@ public class InMemoryTaskManager implements TaskManager {
             }
 
         } else {
-            System.out.println("Task is null");
+            System.out.println("Task is null (addNewTask)");
             return null;
         }
     }
@@ -206,7 +206,7 @@ public class InMemoryTaskManager implements TaskManager {
             }
 
         } else {
-            System.out.println("Task is null");
+            System.out.println("Task is null (update)");
             return null;
         }
     }
@@ -344,7 +344,7 @@ public class InMemoryTaskManager implements TaskManager {
             return null;
         }
 
-        System.out.println("Removed task: " + removedTask);
+        System.out.println("Removed task: " + removedTask + "(deleteTask)");
         return removedTask;
     }
 

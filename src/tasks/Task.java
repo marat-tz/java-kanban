@@ -6,9 +6,9 @@ import java.util.Objects;
 
 public class Task implements Comparable<Task> {
 
+    protected Integer id;
     protected String name;
     protected String description;
-    protected Integer id;
     protected TaskStatus status = TaskStatus.NEW;
     protected Duration duration;
     protected LocalDateTime startTime;

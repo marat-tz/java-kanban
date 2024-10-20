@@ -10,162 +10,116 @@ import type_adapters.LocalDateTimeAdapter;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 public class TaskHandler extends BaseHttpHandler {
 
     private final TaskManager manager;
+    private final Gson gson = new GsonBuilder()
+            .serializeNulls()
+            .registerTypeAdapter(Duration.class, new DurationAdapter())
+            .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
+            .create();
 
     public TaskHandler(TaskManager manager) {
         this.manager = manager;
     }
 
     @Override
-    public void handle(HttpExchange httpExchange) throws IOException {
-
-        InputStream inputStreamBody = httpExchange.getRequestBody();
-
-        String inputMethod = httpExchange.getRequestMethod();
-        String path = httpExchange.getRequestURI().getPath();
+    public void handle(HttpExchange h) throws IOException {
+        InputStream inputStreamBody = h.getRequestBody();
+        String requestMethod = h.getRequestMethod();
+        String requestPath = h.getRequestURI().getPath();
         String body = new String(inputStreamBody.readAllBytes(), StandardCharsets.UTF_8);
 
-        Endpoint endpoint = getEndpoint(path, inputMethod, body);
-        Optional<Integer> taskId = getId(httpExchange);
-
-        String response;
-
-        switch (endpoint) {
-            case POST_ADD:
-                response = taskSerialize(addTask(body));
-                break;
-
-            case POST_UPDATE:
-                response = "Update task";
-                break;
-
-            case GET_ONE: // сделать, чтобы вместо Null было сообщение
-                response = getTask(taskId);
-                break;
-
-            case GET_ALL:
-                response = taskListSerialize(manager.getAllTasks());
-                break;
-
-            case DELETE:
-                if (taskId.isPresent()) {
-                    Task delTask = manager.deleteTask(taskId.get());
-                    if (Objects.nonNull(delTask)) {
-                        response = "Successful delete task: " + "id: "
-                                + delTask.getId() + ", type: " + delTask.getType();
+        if (Pattern.matches("/tasks/", requestPath) || Pattern.matches("/tasks", requestPath)) {
+            switch (requestMethod) {
+                case "GET":
+                    sendText(h, taskListSerialize(manager.getAllTasks()), 200);
+                    break;
+                case "POST":
+                    if (!body.contains("\"id\"")) {
+                        addTask(h, body);
                     } else {
-                        response = "Task with id " + taskId.get() + " not exist";
+                        updateTask(h, body);
                     }
-                } else {
-                    response = "Incorrect id";
+                    break;
+            }
+
+        } else if (Pattern.matches("/tasks/\\d+", requestPath)
+                || Pattern.matches("/tasks/\\d+/", requestPath)) {
+            Optional<Integer> id = getId(requestPath);
+            if (id.isPresent()) {
+                switch (requestMethod) {
+                    case "GET":
+                        getTask(h, id.get());
+                        break;
+                    case "DELETE":
+                        deleteTask(h, id.get());
+                        break;
                 }
-                break;
-
-            case UNKNOWN:
-                response = "Unknown HTTP method was used by client";
-                break;
-
-            default:
-                response = "Unknown HTTP method was used by client";
-        }
-
-        httpExchange.sendResponseHeaders(200, 0);
-
-        try (OutputStream os = httpExchange.getResponseBody()) {
-            os.write(response.getBytes());
-        }
-    }
-
-    private Task addTask(String body) {
-        Gson gson = new GsonBuilder()
-                .registerTypeAdapter(Duration.class, new DurationAdapter())
-                .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
-                .create();
-
-        Task addedTask = manager.addNewTask(gson.fromJson(body, Task.class));
-        return addedTask;
-    }
-
-    private String getTask(Optional<Integer> taskId) {
-        String response;
-
-        if (taskId.isPresent()) {
-            if (Objects.isNull(manager.getTask(taskId.get()))) {
-                response = "Task with id " + taskId.get() + " is not exist";
-
-            } else {
-                response = taskSerialize(manager.getTask(taskId.get()));
             }
 
         } else {
-            response = "Incorrect id"; // нужно вернуть другой код
+            sendText(h, "Unknown request", 404);
         }
+    }
 
-        return response;
+    private void addTask(HttpExchange h, String body) throws IOException {
+        Task addedTask = manager.addNewTask(gson.fromJson(body, Task.class));
+        if (Objects.nonNull(addedTask)) {
+            sendText(h, taskSerialize(addedTask), 201);
+        } else {
+            sendText(h, "Task time overlaps with existing tasks", 406);
+        }
+    }
+
+    private void updateTask(HttpExchange h, String body) throws IOException {
+        Task updatedTask = manager.updateTask(gson.fromJson(body, Task.class));
+        if (Objects.nonNull(updatedTask)) {
+            sendText(h, taskSerialize(updatedTask), 201);
+        } else {
+            sendText(h, "Task time overlaps with existing tasks", 406);
+        }
+    }
+
+    private void getTask(HttpExchange h, Integer taskId) throws IOException {
+        Task task = manager.getTask(taskId);
+            if (Objects.isNull(task)) {
+                sendText(h, "Task with id " + taskId + " is not exist", 404);
+            } else {
+                sendText(h, taskSerialize(task), 200);
+            }
+    }
+
+    private void deleteTask(HttpExchange h, Integer taskId) throws IOException {
+            Task delTask = manager.deleteTask(taskId);
+            if (Objects.nonNull(delTask)) {
+                String response = "Successful remove task: " + "id: "
+                        + delTask.getId() + ", type: " + delTask.getType();
+                sendText(h, response, 200);
+            } else {
+                sendText(h, "Task with id " + taskId + " is not exist", 404);
+            }
     }
 
     private String taskSerialize(Task task) {
-        Gson gson = new GsonBuilder()
-                .serializeNulls()
-                .registerTypeAdapter(Duration.class, new DurationAdapter())
-                .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
-                .create();
         return gson.toJson(task);
     }
 
     private String taskListSerialize(List<Task> tasks) {
-        Gson gson = new GsonBuilder()
-                .serializeNulls()
-                .registerTypeAdapter(Duration.class, new DurationAdapter())
-                .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
-                .create();
         return gson.toJson(tasks);
     }
 
-    private Endpoint getEndpoint(String requestPath, String requestMethod, String body) {
-        String[] pathParts = requestPath.split("/");
-
-        if (pathParts.length == 2 && pathParts[1].equals("tasks")) {
-            switch (requestMethod) {
-                case "GET":
-                    return Endpoint.GET_ALL;
-                case "POST":
-                    if (!body.contains("\"id\"")) {
-                        return Endpoint.POST_ADD;
-                    } else {
-                        return Endpoint.POST_UPDATE;
-                    }
-                case "DELETE":
-                    return Endpoint.DELETE;
-            }
-        }
-
-        if (pathParts.length == 3 && pathParts[1].equals("tasks")) {
-                switch (requestMethod) {
-                    case "GET":
-                        return Endpoint.GET_ONE;
-                    case "DELETE":
-                        return Endpoint.DELETE;
-                }
-
-        }
-
-        return Endpoint.UNKNOWN;
-    }
-
-        private Optional<Integer> getId (HttpExchange exchange) {
-            String[] pathParts = exchange.getRequestURI().getPath().split("/");
-            if (pathParts.length > 2) {
+        private Optional<Integer> getId (String requestPath) {
+            String[] pathParts = requestPath.split("/");
+            if (Pattern.matches("/tasks/\\d+", requestPath) || Pattern.matches("/tasks/\\d+/", requestPath)) {
                 try {
                     return Optional.of(Integer.parseInt(pathParts[2]));
                 } catch (NumberFormatException exception) {

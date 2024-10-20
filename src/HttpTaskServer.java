@@ -1,10 +1,9 @@
 import com.sun.net.httpserver.HttpServer;
 import exceptions.ManagerLoadException;
 import handlers.TaskHandler;
-import managers.FileBackedTaskManager;
+import managers.Managers;
 import managers.TaskManager;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 
@@ -13,8 +12,9 @@ public class HttpTaskServer {
     private static TaskManager manager;
 
     public static void main(String[] args) throws IOException, ManagerLoadException {
-        File file = new File("J:\\_YandexProjects\\java-kanban\\files\\backup.csv");
-        manager = FileBackedTaskManager.loadFromFile(file);
+//        File file = new File("J:\\_YandexProjects\\java-kanban\\files\\backup.csv");
+//        manager = FileBackedTaskManager.loadFromFile(file);
+        manager = Managers.getDefault();
 
         HttpServer httpServer = HttpServer.create(new InetSocketAddress(PORT), 0);
         httpServer.createContext("/tasks", new TaskHandler(manager));
