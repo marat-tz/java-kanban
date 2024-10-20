@@ -58,10 +58,8 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     protected void addTaskInSet(Task task) {
-        if (Objects.nonNull(task.getStartTime())) {
+        if (!(task instanceof Epic)) {
             sortedTasks.add(task);
-        } else {
-            System.out.println("Task startTime is null");
         }
     }
 
@@ -130,7 +128,6 @@ public class InMemoryTaskManager implements TaskManager {
             }
 
             idEpic.put(newEpic.getId(), newEpic);
-            refreshEpicTimeManySubtasks(newEpic.getId());
             addTaskInSet(newEpic);
             System.out.println("Added epic: " + newEpic);
             return newEpic;
@@ -566,7 +563,6 @@ public class InMemoryTaskManager implements TaskManager {
                     .max(LocalDateTime::compareTo)
                     .orElse(null);
 
-            // Duration duration = Duration.between(startTime, endTime);
             Duration duration = subtasks
                     .stream()
                     .map(Subtask::getDuration)

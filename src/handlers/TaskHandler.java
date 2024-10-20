@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 
 public class TaskHandler extends BaseHttpHandler {
 
-    private final TaskManager manager;
+    protected final TaskManager manager;
     private final Gson gson = new GsonBuilder()
             .serializeNulls()
             .registerTypeAdapter(Duration.class, new DurationAdapter())
@@ -57,12 +57,8 @@ public class TaskHandler extends BaseHttpHandler {
             Optional<Integer> id = getId(requestPath);
             if (id.isPresent()) {
                 switch (requestMethod) {
-                    case "GET":
-                        getTask(h, id.get());
-                        break;
-                    case "DELETE":
-                        deleteTask(h, id.get());
-                        break;
+                    case "GET" -> getTask(h, id.get());
+                    case "DELETE" -> deleteTask(h, id.get());
                 }
             }
 
@@ -72,7 +68,13 @@ public class TaskHandler extends BaseHttpHandler {
     }
 
     private void addTask(HttpExchange h, String body) throws IOException {
-        Task addedTask = manager.addNewTask(gson.fromJson(body, Task.class));
+        Task addedTask = null;
+        try {
+            addedTask = manager.addNewTask(gson.fromJson(body, Task.class));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         if (Objects.nonNull(addedTask)) {
             sendText(h, taskSerialize(addedTask), 201);
         } else {
@@ -98,34 +100,31 @@ public class TaskHandler extends BaseHttpHandler {
             }
     }
 
-    private void deleteTask(HttpExchange h, Integer taskId) throws IOException {
+    protected void deleteTask(HttpExchange h, Integer taskId) throws IOException {
             Task delTask = manager.deleteTask(taskId);
             if (Objects.nonNull(delTask)) {
                 String response = "Successful remove task: " + "id: "
                         + delTask.getId() + ", type: " + delTask.getType();
                 sendText(h, response, 200);
             } else {
-                sendText(h, "Task with id " + taskId + " is not exist", 404);
+                sendText(h, "Task with id " + taskId + " does not exist", 404);
             }
     }
 
-    private String taskSerialize(Task task) {
+    protected String taskSerialize(Task task) {
         return gson.toJson(task);
     }
 
-    private String taskListSerialize(List<Task> tasks) {
+    protected String taskListSerialize(List<Task> tasks) {
         return gson.toJson(tasks);
     }
 
-        private Optional<Integer> getId (String requestPath) {
-            String[] pathParts = requestPath.split("/");
-            if (Pattern.matches("/tasks/\\d+", requestPath) || Pattern.matches("/tasks/\\d+/", requestPath)) {
-                try {
-                    return Optional.of(Integer.parseInt(pathParts[2]));
-                } catch (NumberFormatException exception) {
-                    return Optional.empty();
-                }
+    protected Optional<Integer> getId (String requestPath) {
+        String[] pathParts = requestPath.split("/");
+            try {
+                return Optional.of(Integer.parseInt(pathParts[2]));
+            } catch (NumberFormatException exception) {
+                return Optional.empty();
             }
-            return Optional.empty();
-        }
     }
+}

@@ -75,6 +75,13 @@ public class Task implements Comparable<Task> {
 
     @Override
     public int compareTo(Task task) {
+        if (Objects.isNull(this.startTime) && Objects.isNull(task.startTime)) {
+            return 0;
+        } else if (Objects.nonNull(this.startTime) && Objects.isNull(task.startTime)) {
+            return 1;
+        } else if (Objects.isNull(this.startTime)) {
+            return -1;
+        }
         return this.startTime.compareTo(task.startTime);
     }
 

@@ -56,7 +56,11 @@ public class Epic extends Task {
     }
 
     public List<Integer> getEpicSubtasksId() {
-        return new ArrayList<>(epicSubtasks);
+        if (Objects.nonNull(epicSubtasks)) {
+            return new ArrayList<>(epicSubtasks);
+        } else {
+            return new ArrayList<>();
+        }
     }
 
     public void removeSubtask(Integer id) {
