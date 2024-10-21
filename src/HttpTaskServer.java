@@ -1,6 +1,7 @@
 import com.sun.net.httpserver.HttpServer;
 import handlers.EpicHandler;
 import handlers.HistoryHandler;
+import handlers.PrioritizedHandler;
 import handlers.SubtaskHandler;
 import handlers.TaskHandler;
 import managers.HistoryManager;
@@ -25,7 +26,7 @@ public class HttpTaskServer {
         httpServer.createContext("/subtasks", new SubtaskHandler(manager));
         httpServer.createContext("/epics", new EpicHandler(manager));
         httpServer.createContext("/history", new HistoryHandler(historyManager));
-//        httpServer.createContext("/prioritized", new PrioritizedHandler());
+        httpServer.createContext("/prioritized", new PrioritizedHandler(manager));
         httpServer.start();
         System.out.println("Server started");
 
