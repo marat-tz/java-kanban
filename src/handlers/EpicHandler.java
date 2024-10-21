@@ -60,6 +60,15 @@ public class EpicHandler extends TaskHandler {
                 }
             }
 
+        } else if (Pattern.matches("/epics/\\d+/subtasks", requestPath)
+                || Pattern.matches("/epics/\\d+/subtasks/", requestPath)) {
+            Optional<Integer> id = getId(requestPath);
+            if (id.isPresent()) {
+                if ("GET".equals(requestMethod)) {
+                    getEpicSubtasks(h, id.get());
+                }
+            }
+
         } else {
             sendText(h, "Unknown request", 404);
         }
@@ -70,30 +79,34 @@ public class EpicHandler extends TaskHandler {
         if (Objects.nonNull(addedEpic)) {
             sendText(h, taskSerialize(addedEpic), 201);
         } else {
-            sendText(h, "Epic time overlaps with existing tasks", 406);
+            sendText(h, "Epic is null", 404);
         }
     }
 
     private void updateEpic(HttpExchange h, String body) throws IOException {
-        Epic updatedEpic = null;
-        try {
-            updatedEpic = manager.updateTask(gson.fromJson(body, Epic.class));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        Epic updatedEpic = manager.updateTask(gson.fromJson(body, Epic.class));
         if (Objects.nonNull(updatedEpic)) {
             sendText(h, taskSerialize(updatedEpic), 201);
         } else {
-            sendText(h, "Epic time overlaps with existing tasks", 406);
+            sendText(h, "Epic is null or id not exist", 404);
         }
     }
 
     private void getEpic(HttpExchange h, Integer epicId) throws IOException {
         Epic epic = manager.getEpic(epicId);
         if (Objects.isNull(epic)) {
-            sendText(h, "Task with id " + epicId + " is not exist", 404);
+            sendText(h, "Epic with id " + epicId + " is not exist", 404);
         } else {
             sendText(h, taskSerialize(epic), 200);
+        }
+    }
+
+    private void getEpicSubtasks(HttpExchange h, Integer epicId) throws IOException {
+        Epic epic = manager.getEpic(epicId);
+        if (Objects.isNull(epic)) {
+            sendText(h, "Epic with id " + epicId + " is not exist", 404);
+        } else {
+            sendText(h, taskListSerialize(manager.getEpicSubtasks(epicId)), 200);
         }
     }
 }

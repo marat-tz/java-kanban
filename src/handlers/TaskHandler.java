@@ -115,7 +115,7 @@ public class TaskHandler extends BaseHttpHandler {
         return gson.toJson(task);
     }
 
-    protected String taskListSerialize(List<Task> tasks) {
+    protected String taskListSerialize(List<? extends Task> tasks) {
         return gson.toJson(tasks);
     }
 

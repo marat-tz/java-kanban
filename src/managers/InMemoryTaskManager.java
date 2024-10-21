@@ -122,10 +122,7 @@ public class InMemoryTaskManager implements TaskManager {
             newId = generateNewId();
             newEpic.setId(newId);
 
-            if (isTaskTimeMatch(newEpic)) {
-                System.out.println("Epic startTime is match with existent epic");
-                return null;
-            }
+            // эпик на пересечение не проверяем
 
             idEpic.put(newEpic.getId(), newEpic);
             addTaskInSet(newEpic);
@@ -280,11 +277,6 @@ public class InMemoryTaskManager implements TaskManager {
     public Epic updateTask(Epic epicUpdate) {
         int epicId;
 
-        if (isTaskTimeMatch(epicUpdate)) {
-            System.out.println("Updated epic startTime is match with existent epic");
-            return null;
-        }
-
         if (Objects.nonNull(epicUpdate)) {
             epicId = epicUpdate.getId();
 
@@ -301,7 +293,7 @@ public class InMemoryTaskManager implements TaskManager {
             }
 
         } else {
-            System.out.println("Subtask is null");
+            System.out.println("Epic is null");
             return null;
         }
     }
