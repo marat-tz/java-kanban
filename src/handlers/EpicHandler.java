@@ -1,29 +1,17 @@
 package handlers;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.sun.net.httpserver.HttpExchange;
 import managers.TaskManager;
 import tasks.Epic;
-import type_adapters.DurationAdapter;
-import type_adapters.LocalDateTimeAdapter;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
 public class EpicHandler extends TaskHandler {
-
-    private final Gson gson = new GsonBuilder()
-            .serializeNulls()
-            .registerTypeAdapter(Duration.class, new DurationAdapter())
-            .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
-            .create();
 
     public EpicHandler(TaskManager manager) {
         super(manager);
@@ -88,7 +76,7 @@ public class EpicHandler extends TaskHandler {
         if (Objects.nonNull(updatedEpic)) {
             sendText(h, taskSerialize(updatedEpic), 201);
         } else {
-            sendText(h, "Epic is null or id not exist", 404);
+            sendText(h, "Epic id does not exist", 404);
         }
     }
 

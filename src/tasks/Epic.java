@@ -73,6 +73,9 @@ public class Epic extends Task {
 
     public void addSubtask(Subtask subtask) {
         if (Objects.nonNull(subtask)) {
+            if (Objects.isNull(epicSubtasks)) {
+                epicSubtasks = new ArrayList<>();
+            }
             epicSubtasks.add(subtask.getId());
             System.out.println("Subtask added in epic " + getId() + " list");
         } else {

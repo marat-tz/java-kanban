@@ -148,7 +148,7 @@ public class InMemoryTaskManagerTest extends AbstractTaskManagerTest<TaskManager
         assertEquals(time4.plus(duration), taskManager.getEpic(0).getEndTime());
         assertEquals(Duration.ofMinutes(30), taskManager.getEpic(0).getDuration());
 
-        taskManager.deleteTask(3);
+        taskManager.deleteSubtask(3);
         assertEquals(Duration.ofMinutes(20), taskManager.getEpic(0).getDuration());
         assertEquals(time3.plus(duration), taskManager.getEpic(0).getEndTime());
     }
@@ -174,7 +174,7 @@ public class InMemoryTaskManagerTest extends AbstractTaskManagerTest<TaskManager
         assertEquals(time2, taskManager.getEpic(0).getStartTime());
         assertEquals(Duration.ofMinutes(30), taskManager.getEpic(0).getDuration());
 
-        taskManager.deleteTask(1);
+        taskManager.deleteSubtask(1);
         assertEquals(Duration.ofMinutes(20), taskManager.getEpic(0).getDuration());
         assertEquals(time3, taskManager.getEpic(0).getStartTime());
     }

@@ -309,32 +309,72 @@ public class InMemoryTaskManager implements TaskManager {
                 sortedTasks.remove(removedTask);
                 historyManager.remove(taskId);
 
-            } else if (idSubtask.containsKey(taskId)) {
-                Subtask subtask = idSubtask.get(taskId);
-                idEpic.get(subtask.getEpicId()).removeSubtask(taskId);
-                refreshEpicStatus(subtask.getEpicId());
-                removedTask = idSubtask.remove(taskId);
-                sortedTasks.remove(removedTask);
-                refreshEpicTimeManySubtasks(((Subtask) removedTask).getEpicId());
-                historyManager.remove(taskId);
-
-            } else if (idEpic.containsKey(taskId)) {
-                removedTask = idEpic.remove(taskId);
-                sortedTasks.remove(removedTask);
-                historyManager.remove(taskId);
-
             } else {
                 System.out.println("Task with id " + taskId + " not exist");
                 return null;
             }
 
         } else {
-            System.out.println("Task is null or id less than 0");
+            System.out.println("Id is null or less than 0");
             return null;
         }
 
         System.out.println("Removed task: " + removedTask + "(deleteTask)");
         return removedTask;
+    }
+
+    @Override
+    public Subtask deleteSubtask(Integer subtaskId) {
+        Subtask removedSubtask;
+
+        if (Objects.nonNull(subtaskId) && subtaskId >= 0) {
+            if (idSubtask.containsKey(subtaskId)) {
+                Subtask subtask = idSubtask.get(subtaskId);
+                idEpic.get(subtask.getEpicId()).removeSubtask(subtaskId);
+                refreshEpicStatus(subtask.getEpicId());
+                removedSubtask = idSubtask.remove(subtaskId);
+                sortedTasks.remove(removedSubtask);
+                refreshEpicTimeManySubtasks(removedSubtask.getEpicId());
+                historyManager.remove(subtaskId);
+
+            } else {
+                System.out.println("Task with id " + subtaskId + " not exist");
+                return null;
+            }
+
+        } else {
+            System.out.println("Id is null or less than 0");
+            return null;
+        }
+
+        System.out.println("Removed task: " + removedSubtask + "(deleteSubtask)");
+        return removedSubtask;
+    }
+
+
+    @Override
+    public Epic deleteEpic(Integer epicId) {
+        Epic removedEpic;
+
+        if (Objects.nonNull(epicId) && epicId >= 0) {
+
+            if (idEpic.containsKey(epicId)) {
+                removedEpic = idEpic.remove(epicId);
+                sortedTasks.remove(removedEpic);
+                historyManager.remove(epicId);
+
+            } else {
+                System.out.println("Task with id " + epicId + " not exist");
+                return null;
+            }
+
+        } else {
+            System.out.println("Id is null or less than 0");
+            return null;
+        }
+
+        System.out.println("Removed task: " + removedEpic + "(deleteEpic)");
+        return removedEpic;
     }
 
     @Override

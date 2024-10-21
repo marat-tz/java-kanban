@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 public class TaskHandler extends BaseHttpHandler {
 
     protected final TaskManager manager;
-    private final Gson gson = new GsonBuilder()
+    protected final Gson gson = new GsonBuilder()
             .serializeNulls()
             .registerTypeAdapter(Duration.class, new DurationAdapter())
             .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
@@ -68,13 +68,7 @@ public class TaskHandler extends BaseHttpHandler {
     }
 
     private void addTask(HttpExchange h, String body) throws IOException {
-        Task addedTask = null;
-        try {
-            addedTask = manager.addNewTask(gson.fromJson(body, Task.class));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
+        Task addedTask = manager.addNewTask(gson.fromJson(body, Task.class));
         if (Objects.nonNull(addedTask)) {
             sendText(h, taskSerialize(addedTask), 201);
         } else {
