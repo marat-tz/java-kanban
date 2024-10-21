@@ -94,7 +94,7 @@ public class TaskHandler extends BaseHttpHandler {
             }
     }
 
-    protected void deleteTask(HttpExchange h, Integer taskId) throws IOException {
+    private void deleteTask(HttpExchange h, Integer taskId) throws IOException {
             Task delTask = manager.deleteTask(taskId);
             if (Objects.nonNull(delTask)) {
                 String response = "Successful remove task: " + "id: "

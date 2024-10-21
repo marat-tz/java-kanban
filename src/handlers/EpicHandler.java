@@ -44,7 +44,7 @@ public class EpicHandler extends TaskHandler {
             if (id.isPresent()) {
                 switch (requestMethod) {
                     case "GET" -> getEpic(h, id.get());
-                    case "DELETE" -> deleteTask(h, id.get());
+                    case "DELETE" -> deleteEpic(h, id.get());
                 }
             }
 
@@ -95,6 +95,17 @@ public class EpicHandler extends TaskHandler {
             sendText(h, "Epic with id " + epicId + " is not exist", 404);
         } else {
             sendText(h, taskListSerialize(manager.getEpicSubtasks(epicId)), 200);
+        }
+    }
+
+    private void deleteEpic(HttpExchange h, Integer epicId) throws IOException {
+        Epic delEpic = manager.deleteEpic(epicId);
+        if (Objects.nonNull(delEpic)) {
+            String response = "Successful remove epic: " + "id: "
+                    + delEpic.getId() + ", type: " + delEpic.getType();
+            sendText(h, response, 200);
+        } else {
+            sendText(h, "Task with id " + epicId + " does not exist", 404);
         }
     }
 }

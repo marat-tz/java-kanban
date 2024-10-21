@@ -44,7 +44,7 @@ public class SubtaskHandler extends TaskHandler {
             if (id.isPresent()) {
                 switch (requestMethod) {
                     case "GET" -> getSubtask(h, id.get());
-                    case "DELETE" -> deleteTask(h, id.get());
+                    case "DELETE" -> deleteSubtask(h, id.get());
                 }
             }
 
@@ -77,6 +77,17 @@ public class SubtaskHandler extends TaskHandler {
             sendText(h, "Subtask with id " + subtaskId + " is not exist", 404);
         } else {
             sendText(h, taskSerialize(subtask), 200);
+        }
+    }
+
+    private void deleteSubtask(HttpExchange h, Integer subId) throws IOException {
+        Subtask delSub = manager.deleteSubtask(subId);
+        if (Objects.nonNull(delSub)) {
+            String response = "Successful remove subtask: " + "id: "
+                    + delSub.getId() + ", type: " + delSub.getType();
+            sendText(h, response, 200);
+        } else {
+            sendText(h, "Subtask with id " + subId + " does not exist", 404);
         }
     }
 }
