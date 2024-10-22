@@ -27,6 +27,7 @@ public class HttpTaskServer {
         httpServer.createContext("/history", new HistoryHandler(historyManager));
         httpServer.createContext("/prioritized", new PrioritizedHandler(manager));
     }
+
     public void start() {
         httpServer.start();
         System.out.println("Server started");
