@@ -115,7 +115,7 @@ public class TaskHandler extends BaseHttpHandler {
         return gson.toJson(tasks);
     }
 
-    protected Optional<Integer> getId (String requestPath) {
+    protected Optional<Integer> getId(String requestPath) {
         String[] pathParts = requestPath.split("/");
             try {
                 return Optional.of(Integer.parseInt(pathParts[2]));
