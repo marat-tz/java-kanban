@@ -23,7 +23,9 @@ public interface TaskManager {
     Epic updateTask(Epic epicUpdate);
 
     Task deleteTask(Integer taskId);
+
     Epic deleteEpic(Integer epicId);
+
     Subtask deleteSubtask(Integer subtaskId);
 
     void deleteAllTasks();
