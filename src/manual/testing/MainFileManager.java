@@ -1,4 +1,4 @@
-package manual_testing;
+package manual.testing;
 
 import exceptions.ManagerLoadException;
 import managers.FileBackedTaskManager;

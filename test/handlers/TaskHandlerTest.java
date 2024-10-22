@@ -10,8 +10,8 @@ import org.junit.jupiter.api.Test;
 import server.HttpTaskServer;
 import tasks.Task;
 import tasks.TaskStatus;
-import type_adapters.DurationAdapter;
-import type_adapters.LocalDateTimeAdapter;
+import type.adapters.DurationAdapter;
+import type.adapters.LocalDateTimeAdapter;
 
 import java.io.IOException;
 import java.net.URI;

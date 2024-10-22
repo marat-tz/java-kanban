@@ -6,7 +6,7 @@ import com.sun.net.httpserver.HttpExchange;
 import managers.TaskManager;
 import tasks.Subtask;
 import tasks.Task;
-import type_adapters.SubtaskAdapter;
+import type.adapters.SubtaskAdapter;
 
 import java.io.IOException;
 import java.io.InputStream;

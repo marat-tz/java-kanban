@@ -13,8 +13,8 @@ import tasks.Epic;
 import tasks.Subtask;
 import tasks.Task;
 import tasks.TaskStatus;
-import type_adapters.EpicAdapter;
-import type_adapters.SubtaskAdapter;
+import type.adapters.EpicAdapter;
+import type.adapters.SubtaskAdapter;
 
 import java.io.IOException;
 import java.net.URI;
