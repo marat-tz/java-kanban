@@ -1,17 +1,27 @@
 package handlers;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.sun.net.httpserver.HttpExchange;
 import managers.TaskManager;
 import tasks.Subtask;
+import tasks.Task;
+import type_adapters.SubtaskAdapter;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
 public class SubtaskHandler extends TaskHandler {
+
+    protected final Gson gson = new GsonBuilder()
+            .serializeNulls()
+            .registerTypeAdapter(Subtask.class, new SubtaskAdapter())
+            .create();
 
     public SubtaskHandler(TaskManager manager) {
         super(manager);
@@ -27,10 +37,12 @@ public class SubtaskHandler extends TaskHandler {
         if (Pattern.matches("/subtasks/", requestPath) || Pattern.matches("/subtasks", requestPath)) {
             switch (requestMethod) {
                 case "GET":
-                    sendText(h, taskListSerialize(manager.getAllSubtasks()), 200);
+                    sendText(h, subtaskListSerialize(manager.getAllSubtasks()), 200);
                     break;
                 case "POST":
-                    if (!body.contains("\"id\"")) {
+                    if (body.isEmpty() || body.isBlank()) {
+                        sendText(h, "request body is empty", 400);
+                    } else if (!body.contains("\"id\"")) {
                         addSubtask(h, body);
                     } else {
                         updateSubtask(h, body);
@@ -56,7 +68,7 @@ public class SubtaskHandler extends TaskHandler {
     private void addSubtask(HttpExchange h, String body) throws IOException {
         Subtask addedSubtask = manager.addNewTask(gson.fromJson(body, Subtask.class));
         if (Objects.nonNull(addedSubtask)) {
-            sendText(h, taskSerialize(addedSubtask), 201);
+            sendText(h, subtaskSerialize(addedSubtask), 201);
         } else {
             sendText(h, "Epic does not exist or subtask time overlaps with existing tasks", 406);
         }
@@ -65,7 +77,7 @@ public class SubtaskHandler extends TaskHandler {
     private void updateSubtask(HttpExchange h, String body) throws IOException {
         Subtask updatedSubtask = manager.updateTask(gson.fromJson(body, Subtask.class));
         if (Objects.nonNull(updatedSubtask)) {
-            sendText(h, taskSerialize(updatedSubtask), 201);
+            sendText(h, subtaskSerialize(updatedSubtask), 201);
         } else {
             sendText(h, "Subtask id does not exist or time overlaps with existing tasks", 406);
         }
@@ -76,7 +88,7 @@ public class SubtaskHandler extends TaskHandler {
         if (Objects.isNull(subtask)) {
             sendText(h, "Subtask with id " + subtaskId + " is not exist", 404);
         } else {
-            sendText(h, taskSerialize(subtask), 200);
+            sendText(h, subtaskSerialize(subtask), 200);
         }
     }
 
@@ -89,5 +101,13 @@ public class SubtaskHandler extends TaskHandler {
         } else {
             sendText(h, "Subtask with id " + subId + " does not exist", 404);
         }
+    }
+
+    protected String subtaskSerialize(Subtask subtask) {
+        return gson.toJson(subtask);
+    }
+
+    protected String subtaskListSerialize(List<? extends Task> subs) {
+        return gson.toJson(subs);
     }
 }

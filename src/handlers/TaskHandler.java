@@ -44,7 +44,9 @@ public class TaskHandler extends BaseHttpHandler {
                     sendText(h, taskListSerialize(manager.getAllTasks()), 200);
                     break;
                 case "POST":
-                    if (!body.contains("\"id\"")) {
+                    if (body.isEmpty() || body.isBlank()) {
+                        sendText(h, "request body is empty", 400);
+                    } else if (!body.contains("\"id\"")) {
                         addTask(h, body);
                     } else {
                         updateTask(h, body);

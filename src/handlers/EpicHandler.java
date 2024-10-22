@@ -1,17 +1,29 @@
 package handlers;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.sun.net.httpserver.HttpExchange;
 import managers.TaskManager;
 import tasks.Epic;
+import tasks.Subtask;
+import tasks.Task;
+import type_adapters.EpicAdapter;
+import type_adapters.SubtaskAdapter;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
 public class EpicHandler extends TaskHandler {
+
+    protected final Gson gson = new GsonBuilder()
+            .serializeNulls()
+            .registerTypeAdapter(Epic.class, new EpicAdapter())
+            .create();
 
     public EpicHandler(TaskManager manager) {
         super(manager);
@@ -27,10 +39,12 @@ public class EpicHandler extends TaskHandler {
         if (Pattern.matches("/epics/", requestPath) || Pattern.matches("/epics", requestPath)) {
             switch (requestMethod) {
                 case "GET":
-                    sendText(h, taskListSerialize(manager.getAllEpic()), 200);
+                    sendText(h, epicListSerialize(manager.getAllEpic()), 200);
                     break;
                 case "POST":
-                    if (!body.contains("\"id\"")) {
+                    if (body.isEmpty() || body.isBlank()) {
+                        sendText(h, "request body is empty", 400);
+                    } else if (!body.contains("\"id\"")) {
                         addEpic(h, body);
                     } else {
                         updateEpic(h, body);
@@ -65,7 +79,7 @@ public class EpicHandler extends TaskHandler {
     private void addEpic(HttpExchange h, String body) throws IOException {
         Epic addedEpic = manager.addNewTask(gson.fromJson(body, Epic.class));
         if (Objects.nonNull(addedEpic)) {
-            sendText(h, taskSerialize(addedEpic), 201);
+            sendText(h, epicSerialize(addedEpic), 201);
         } else {
             sendText(h, "Epic is null", 404);
         }
@@ -74,7 +88,7 @@ public class EpicHandler extends TaskHandler {
     private void updateEpic(HttpExchange h, String body) throws IOException {
         Epic updatedEpic = manager.updateTask(gson.fromJson(body, Epic.class));
         if (Objects.nonNull(updatedEpic)) {
-            sendText(h, taskSerialize(updatedEpic), 201);
+            sendText(h, epicSerialize(updatedEpic), 201);
         } else {
             sendText(h, "Epic id does not exist", 404);
         }
@@ -85,16 +99,20 @@ public class EpicHandler extends TaskHandler {
         if (Objects.isNull(epic)) {
             sendText(h, "Epic with id " + epicId + " is not exist", 404);
         } else {
-            sendText(h, taskSerialize(epic), 200);
+            sendText(h, epicSerialize(epic), 200);
         }
     }
 
     private void getEpicSubtasks(HttpExchange h, Integer epicId) throws IOException {
         Epic epic = manager.getEpic(epicId);
         if (Objects.isNull(epic)) {
-            sendText(h, "Epic with id " + epicId + " is not exist", 404);
+            sendText(h, "Epic with id " + epicId + " does not exist", 404);
         } else {
-            sendText(h, taskListSerialize(manager.getEpicSubtasks(epicId)), 200);
+            try {
+                sendText(h, subtaskListSerialize(manager.getEpicSubtasks(epicId)), 200);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
         }
     }
 
@@ -107,5 +125,21 @@ public class EpicHandler extends TaskHandler {
         } else {
             sendText(h, "Task with id " + epicId + " does not exist", 404);
         }
+    }
+
+    protected String epicSerialize(Epic epic) {
+        return gson.toJson(epic);
+    }
+
+    protected String epicListSerialize(List<? extends Task> epics) {
+        return gson.toJson(epics);
+    }
+
+    protected String subtaskListSerialize(List<? extends Task> subs) {
+        Gson gson = new GsonBuilder()
+                .serializeNulls()
+                .registerTypeAdapter(Subtask.class, new SubtaskAdapter())
+                .create();
+        return gson.toJson(subs);
     }
 }
