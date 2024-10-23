@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 
 public class TaskHandler extends BaseHttpHandler {
 
-    private static final Logger logger = Logger.getAnonymousLogger();
+    protected static final Logger logger = Logger.getAnonymousLogger();
 
     protected final TaskManager manager;
     protected final Gson gson = new GsonBuilder()

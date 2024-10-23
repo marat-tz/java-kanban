@@ -15,12 +15,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 public class EpicHandler extends TaskHandler {
-
-    private static final Logger logger = Logger.getAnonymousLogger();
 
     protected final Gson gson = new GsonBuilder()
             .serializeNulls()
