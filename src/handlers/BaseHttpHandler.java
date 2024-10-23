@@ -8,7 +8,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public abstract class BaseHttpHandler implements HttpHandler {
-    private static final Logger logger = Logger.getAnonymousLogger();
+    protected static final Logger logger = Logger.getAnonymousLogger();
 
     protected void sendText(HttpExchange h, String text, Integer code) {
         try {

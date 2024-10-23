@@ -8,7 +8,6 @@ import tasks.Task;
 import type.adapters.DurationAdapter;
 import type.adapters.LocalDateTimeAdapter;
 
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -16,12 +15,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 public class TaskHandler extends BaseHttpHandler {
-
-    protected static final Logger logger = Logger.getAnonymousLogger();
 
     protected final TaskManager manager;
     protected final Gson gson = new GsonBuilder()
@@ -35,7 +31,7 @@ public class TaskHandler extends BaseHttpHandler {
     }
 
     @Override
-    public void handle(HttpExchange h) throws IOException {
+    public void handle(HttpExchange h) {
         try {
             String requestMethod = h.getRequestMethod();
             String requestPath = h.getRequestURI().getPath();
