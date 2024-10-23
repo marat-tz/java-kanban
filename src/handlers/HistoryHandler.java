@@ -8,13 +8,14 @@ import tasks.Task;
 import type.adapters.DurationAdapter;
 import type.adapters.LocalDateTimeAdapter;
 
-import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.regex.Pattern;
 
 public class HistoryHandler extends BaseHttpHandler {
+
     protected final HistoryManager manager;
     protected final Gson gson = new GsonBuilder()
             .serializeNulls()
@@ -27,17 +28,22 @@ public class HistoryHandler extends BaseHttpHandler {
     }
 
     @Override
-    public void handle(HttpExchange h) throws IOException {
-        String requestMethod = h.getRequestMethod();
-        String requestPath = h.getRequestURI().getPath();
+    public void handle(HttpExchange h) {
+        try {
+            String requestMethod = h.getRequestMethod();
+            String requestPath = h.getRequestURI().getPath();
 
-        if (Pattern.matches("/history/", requestPath) || Pattern.matches("/history", requestPath)) {
-            if ("GET".equals(requestMethod)) {
-                sendText(h, taskListSerialize(manager.getHistory()), 200);
+            if (Pattern.matches("/history/", requestPath) || Pattern.matches("/history", requestPath)) {
+                if ("GET".equals(requestMethod)) {
+                    sendText(h, taskListSerialize(manager.getHistory()), 200);
 
-            } else {
-                sendText(h, "Unknown request", 404);
+                } else {
+                    sendText(h, "Unknown request", 404);
+                }
             }
+        } catch (Exception e) {
+            sendText(h, "internal server error", 500);
+            logger.log(Level.SEVERE, "error while handle history request", e);
         }
     }
 
