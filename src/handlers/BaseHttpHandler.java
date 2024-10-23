@@ -21,4 +21,13 @@ public abstract class BaseHttpHandler implements HttpHandler {
             logger.log(Level.SEVERE, "error while send text", e);
         }
     }
+
+    protected void sendInternalError(HttpExchange h) {
+        try {
+            h.sendResponseHeaders(500, 0);
+            h.close();
+        } catch (Exception e) {
+            logger.log(Level.SEVERE, "error while send internal error", e);
+        }
+    }
 }

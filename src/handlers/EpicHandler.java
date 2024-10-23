@@ -75,7 +75,7 @@ public class EpicHandler extends TaskHandler {
             }
 
         } catch (Exception e) {
-            sendText(h, "internal server error", 500);
+            sendInternalError(h);
             logger.log(Level.SEVERE, "error while handle epic request", e);
         }
     }
@@ -89,7 +89,7 @@ public class EpicHandler extends TaskHandler {
                 sendText(h, "Epic is null", 404);
             }
         } catch (Exception e) {
-            sendText(h, "internal server error", 500);
+            sendInternalError(h);
             logger.log(Level.SEVERE, "error while add epic", e);
         }
     }
@@ -103,7 +103,7 @@ public class EpicHandler extends TaskHandler {
                 sendText(h, "Epic id does not exist", 404);
             }
         } catch (Exception e) {
-            sendText(h, "internal server error", 500);
+            sendInternalError(h);
             logger.log(Level.SEVERE, "error while update epic", e);
         }
     }
@@ -117,7 +117,7 @@ public class EpicHandler extends TaskHandler {
                 sendText(h, epicSerialize(epic), 200);
             }
         } catch (Exception e) {
-            sendText(h, "internal server error", 500);
+            sendInternalError(h);
             logger.log(Level.SEVERE, "error while get epic", e);
         }
     }
@@ -131,7 +131,7 @@ public class EpicHandler extends TaskHandler {
                 sendText(h, subtaskListSerialize(manager.getEpicSubtasks(epicId)), 200);
             }
         } catch (Exception e) {
-            sendText(h, "internal server error", 500);
+            sendInternalError(h);
             logger.log(Level.SEVERE, "error while get epic subtasks", e);
         }
     }
@@ -147,7 +147,7 @@ public class EpicHandler extends TaskHandler {
                 sendText(h, "Task with id " + epicId + " does not exist", 404);
             }
         } catch (Exception e) {
-            sendText(h, "internal server error", 500);
+            sendInternalError(h);
             logger.log(Level.SEVERE, "error while delete epic", e);
         }
     }

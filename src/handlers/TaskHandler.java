@@ -68,7 +68,7 @@ public class TaskHandler extends BaseHttpHandler {
             }
 
         } catch (Exception e) {
-            sendText(h, "internal server error", 500);
+            sendInternalError(h);
             logger.log(Level.SEVERE, "error while handle task request", e);
         }
     }
@@ -82,7 +82,7 @@ public class TaskHandler extends BaseHttpHandler {
                 sendText(h, "Task time overlaps with existing tasks", 406);
             }
         } catch (Exception e) {
-            sendText(h, "internal server error", 500);
+            sendInternalError(h);
             logger.log(Level.SEVERE, "error while add task", e);
         }
     }
@@ -96,7 +96,7 @@ public class TaskHandler extends BaseHttpHandler {
                 sendText(h, "Task time overlaps with existing tasks", 406);
             }
         } catch (Exception e) {
-            sendText(h, "internal server error", 500);
+            sendInternalError(h);
             logger.log(Level.SEVERE, "error while update task", e);
         }
     }
@@ -110,7 +110,7 @@ public class TaskHandler extends BaseHttpHandler {
                 sendText(h, taskSerialize(task), 200);
             }
         } catch (Exception e) {
-            sendText(h, "internal server error", 500);
+            sendInternalError(h);
             logger.log(Level.SEVERE, "error while get task", e);
         }
     }
@@ -126,7 +126,7 @@ public class TaskHandler extends BaseHttpHandler {
                 sendText(h, "Task with id " + taskId + " does not exist", 404);
             }
         } catch (Exception e) {
-            sendText(h, "internal server error", 500);
+            sendInternalError(h);
             logger.log(Level.SEVERE, "error while delete task", e);
         }
     }

@@ -42,7 +42,7 @@ public class HistoryHandler extends BaseHttpHandler {
                 }
             }
         } catch (Exception e) {
-            sendText(h, "internal server error", 500);
+            sendInternalError(h);
             logger.log(Level.SEVERE, "error while handle history request", e);
         }
     }

@@ -64,7 +64,7 @@ public class SubtaskHandler extends TaskHandler {
             }
 
         } catch (Exception e) {
-            sendText(h, "internal server error", 500);
+            sendInternalError(h);
             logger.log(Level.SEVERE, "error while handle subtask request", e);
         }
     }
@@ -78,7 +78,7 @@ public class SubtaskHandler extends TaskHandler {
                 sendText(h, "Epic does not exist or subtask time overlaps with existing tasks", 406);
             }
         } catch (Exception e) {
-            sendText(h, "internal server error", 500);
+            sendInternalError(h);
             logger.log(Level.SEVERE, "error while add subtask", e);
         }
     }
@@ -92,7 +92,7 @@ public class SubtaskHandler extends TaskHandler {
                 sendText(h, "Subtask id does not exist or time overlaps with existing tasks", 406);
             }
         } catch (Exception e) {
-            sendText(h, "internal server error", 500);
+            sendInternalError(h);
             logger.log(Level.SEVERE, "error while update subtask", e);
         }
     }
@@ -106,7 +106,7 @@ public class SubtaskHandler extends TaskHandler {
                 sendText(h, subtaskSerialize(subtask), 200);
             }
         } catch (Exception e) {
-            sendText(h, "internal server error", 500);
+            sendInternalError(h);
             logger.log(Level.SEVERE, "error while get subtask", e);
         }
     }
@@ -122,7 +122,7 @@ public class SubtaskHandler extends TaskHandler {
                 sendText(h, "Subtask with id " + subId + " does not exist", 404);
             }
         } catch (Exception e) {
-            sendText(h, "internal server error", 500);
+            sendInternalError(h);
             logger.log(Level.SEVERE, "error while remove subtask", e);
         }
     }
