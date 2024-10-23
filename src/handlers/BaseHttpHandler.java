@@ -18,7 +18,6 @@ public abstract class BaseHttpHandler implements HttpHandler {
             h.getResponseBody().write(resp);
             h.close();
         } catch (Exception e) {
-            sendText(h, "internal server error", 500);
             logger.log(Level.SEVERE, "error while send text", e);
         }
     }
