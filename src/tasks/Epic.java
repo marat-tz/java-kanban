@@ -11,8 +11,6 @@ public class Epic extends Task {
     protected LocalDateTime endTime;
     private List<Integer> epicSubtasks = new ArrayList<>();
 
-    protected final TaskType type = TaskType.EPIC;
-
     public Epic(String name, String description) {
         super(name, description, TaskStatus.NEW);
     }
@@ -58,7 +56,11 @@ public class Epic extends Task {
     }
 
     public List<Integer> getEpicSubtasksId() {
-        return new ArrayList<>(epicSubtasks);
+        if (Objects.nonNull(epicSubtasks)) {
+            return new ArrayList<>(epicSubtasks);
+        } else {
+            return new ArrayList<>();
+        }
     }
 
     public void removeSubtask(Integer id) {
@@ -66,11 +68,14 @@ public class Epic extends Task {
     }
 
     public TaskType getType() {
-        return type;
+        return TaskType.EPIC;
     }
 
     public void addSubtask(Subtask subtask) {
         if (Objects.nonNull(subtask)) {
+            if (Objects.isNull(epicSubtasks)) {
+                epicSubtasks = new ArrayList<>();
+            }
             epicSubtasks.add(subtask.getId());
             System.out.println("Subtask added in epic " + getId() + " list");
         } else {
@@ -93,11 +98,13 @@ public class Epic extends Task {
     @Override
     public String toString() {
         if (Objects.isNull(duration)) {
-            return String.format("%s,%s,%s,%s,%s,%s,%s", id, type, name, status, description, null, startTime);
+            return String.format("%s,%s,%s,%s,%s,%s,%s", id, TaskType.EPIC, name, status, description, null, startTime);
+
         } else if (Objects.isNull(startTime)) {
-            return String.format("%s,%s,%s,%s,%s,%s,%s", id, type, name, status, description, null, null);
+            return String.format("%s,%s,%s,%s,%s,%s,%s", id, TaskType.EPIC, name, status, description, null, null);
+
         } else {
-            return String.format("%s,%s,%s,%s,%s,%s,%s", id, type, name, status, description,
+            return String.format("%s,%s,%s,%s,%s,%s,%s", id, TaskType.EPIC, name, status, description,
                     duration.toMinutes(), startTime);
         }
     }

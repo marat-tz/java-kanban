@@ -1,3 +1,5 @@
+package manual.testing;
+
 import managers.Managers;
 import managers.TaskManager;
 import tasks.Epic;

@@ -1,3 +1,5 @@
+package manual.testing;
+
 import exceptions.ManagerLoadException;
 import managers.FileBackedTaskManager;
 import managers.TaskManager;

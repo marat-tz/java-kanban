@@ -8,8 +8,6 @@ public class Subtask extends Task {
 
     private Integer epicId;
 
-    protected final TaskType type = TaskType.SUBTASK;
-
     public Subtask(int id, String name, String description, Integer epicId, TaskStatus status) {
         super(id, name, description, status);
         this.epicId = epicId;
@@ -74,7 +72,7 @@ public class Subtask extends Task {
     }
 
     public TaskType getType() {
-        return type;
+        return TaskType.SUBTASK;
     }
 
     public void setEpicId(Epic epic) {
@@ -87,7 +85,7 @@ public class Subtask extends Task {
 
     @Override
     public String toString() {
-        return String.format("%s,%s,%s,%s,%s,%s,%s,%s", id, type, name, status,
+        return String.format("%s,%s,%s,%s,%s,%s,%s,%s", id, TaskType.SUBTASK, name, status,
                 description, duration.toMinutes(), startTime, epicId);
     }
 }

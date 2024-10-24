@@ -58,10 +58,8 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     protected void addTaskInSet(Task task) {
-        if (Objects.nonNull(task.getStartTime())) {
+        if (!(task instanceof Epic)) {
             sortedTasks.add(task);
-        } else {
-            System.out.println("Task startTime is null");
         }
     }
 
@@ -93,7 +91,7 @@ public class InMemoryTaskManager implements TaskManager {
             newTask.setId(newId);
 
             if (isTaskTimeMatch(newTask)) {
-                System.out.println("Task startTime is match with existent task");
+                System.out.println("Task startTime is match with existent task (addNewTask)");
                 return null;
             }
 
@@ -111,7 +109,7 @@ public class InMemoryTaskManager implements TaskManager {
             }
 
         } else {
-            System.out.println("Task is null");
+            System.out.println("Task is null (addNewTask)");
             return null;
         }
     }
@@ -124,13 +122,9 @@ public class InMemoryTaskManager implements TaskManager {
             newId = generateNewId();
             newEpic.setId(newId);
 
-            if (isTaskTimeMatch(newEpic)) {
-                System.out.println("Epic startTime is match with existent epic");
-                return null;
-            }
+            // эпик на пересечение не проверяем
 
             idEpic.put(newEpic.getId(), newEpic);
-            refreshEpicTimeManySubtasks(newEpic.getId());
             addTaskInSet(newEpic);
             System.out.println("Added epic: " + newEpic);
             return newEpic;
@@ -206,7 +200,7 @@ public class InMemoryTaskManager implements TaskManager {
             }
 
         } else {
-            System.out.println("Task is null");
+            System.out.println("Task is null (update)");
             return null;
         }
     }
@@ -283,11 +277,6 @@ public class InMemoryTaskManager implements TaskManager {
     public Epic updateTask(Epic epicUpdate) {
         int epicId;
 
-        if (isTaskTimeMatch(epicUpdate)) {
-            System.out.println("Updated epic startTime is match with existent epic");
-            return null;
-        }
-
         if (Objects.nonNull(epicUpdate)) {
             epicId = epicUpdate.getId();
 
@@ -304,7 +293,7 @@ public class InMemoryTaskManager implements TaskManager {
             }
 
         } else {
-            System.out.println("Subtask is null");
+            System.out.println("Epic is null");
             return null;
         }
     }
@@ -320,32 +309,72 @@ public class InMemoryTaskManager implements TaskManager {
                 sortedTasks.remove(removedTask);
                 historyManager.remove(taskId);
 
-            } else if (idSubtask.containsKey(taskId)) {
-                Subtask subtask = idSubtask.get(taskId);
-                idEpic.get(subtask.getEpicId()).removeSubtask(taskId);
-                refreshEpicStatus(subtask.getEpicId());
-                removedTask = idSubtask.remove(taskId);
-                sortedTasks.remove(removedTask);
-                refreshEpicTimeManySubtasks(((Subtask) removedTask).getEpicId());
-                historyManager.remove(taskId);
-
-            } else if (idEpic.containsKey(taskId)) {
-                removedTask = idEpic.remove(taskId);
-                sortedTasks.remove(removedTask);
-                historyManager.remove(taskId);
-
             } else {
                 System.out.println("Task with id " + taskId + " not exist");
                 return null;
             }
 
         } else {
-            System.out.println("Task is null or id less than 0");
+            System.out.println("Id is null or less than 0");
             return null;
         }
 
-        System.out.println("Removed task: " + removedTask);
+        System.out.println("Removed task: " + removedTask + "(deleteTask)");
         return removedTask;
+    }
+
+    @Override
+    public Subtask deleteSubtask(Integer subtaskId) {
+        Subtask removedSubtask;
+
+        if (Objects.nonNull(subtaskId) && subtaskId >= 0) {
+            if (idSubtask.containsKey(subtaskId)) {
+                Subtask subtask = idSubtask.get(subtaskId);
+                idEpic.get(subtask.getEpicId()).removeSubtask(subtaskId);
+                refreshEpicStatus(subtask.getEpicId());
+                removedSubtask = idSubtask.remove(subtaskId);
+                sortedTasks.remove(removedSubtask);
+                refreshEpicTimeManySubtasks(removedSubtask.getEpicId());
+                historyManager.remove(subtaskId);
+
+            } else {
+                System.out.println("Task with id " + subtaskId + " not exist");
+                return null;
+            }
+
+        } else {
+            System.out.println("Id is null or less than 0");
+            return null;
+        }
+
+        System.out.println("Removed task: " + removedSubtask + "(deleteSubtask)");
+        return removedSubtask;
+    }
+
+
+    @Override
+    public Epic deleteEpic(Integer epicId) {
+        Epic removedEpic;
+
+        if (Objects.nonNull(epicId) && epicId >= 0) {
+
+            if (idEpic.containsKey(epicId)) {
+                removedEpic = idEpic.remove(epicId);
+                sortedTasks.remove(removedEpic);
+                historyManager.remove(epicId);
+
+            } else {
+                System.out.println("Task with id " + epicId + " not exist");
+                return null;
+            }
+
+        } else {
+            System.out.println("Id is null or less than 0");
+            return null;
+        }
+
+        System.out.println("Removed task: " + removedEpic + "(deleteEpic)");
+        return removedEpic;
     }
 
     @Override
@@ -566,7 +595,6 @@ public class InMemoryTaskManager implements TaskManager {
                     .max(LocalDateTime::compareTo)
                     .orElse(null);
 
-            // Duration duration = Duration.between(startTime, endTime);
             Duration duration = subtasks
                     .stream()
                     .map(Subtask::getDuration)

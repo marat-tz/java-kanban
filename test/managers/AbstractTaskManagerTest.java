@@ -313,7 +313,7 @@ abstract class AbstractTaskManagerTest<T extends TaskManager> {
         // do
         // check
         assertNotNull(taskManager.getEpic(savedEpic.getId()));
-        taskManager.deleteTask(savedEpic.getId());
+        taskManager.deleteEpic(savedEpic.getId());
         assertNull(taskManager.getEpic(savedEpic.getId()));
     }
 
@@ -347,7 +347,7 @@ abstract class AbstractTaskManagerTest<T extends TaskManager> {
         // do
         // check
         assertNotNull(taskManager.getSubtask(savedSubtask.getId()));
-        taskManager.deleteTask(savedSubtask.getId());
+        taskManager.deleteSubtask(savedSubtask.getId());
         assertNull(taskManager.getSubtask(savedSubtask.getId()));
     }
 

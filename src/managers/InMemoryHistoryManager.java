@@ -95,11 +95,12 @@ public class InMemoryHistoryManager implements HistoryManager {
         if (Objects.nonNull(task)) {
             // по условию ФЗ-5 в истории должно сохраняться состояние задачи на момент фиксации
             // поэтому делаем глубокую копию
-            Task copyTask = new Task(task.getId(), task.getName(), task.getDescription(), task.getStatus());
+            Task copyTask = new Task(task.getId(), task.getName(), task.getDescription(), task.getStatus(),
+                    task.getDuration(), task.getStartTime());
 
             if (!historyMap.containsKey(task.getId())) {
                 linkLast(copyTask);
-                System.out.println("Added new task with id = " + task.getId());
+                System.out.println("Added new task in history with id = " + task.getId());
 
             } else {
                 remove(task.getId());
